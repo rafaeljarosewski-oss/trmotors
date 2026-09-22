@@ -55,11 +55,14 @@ const TR = {
    ------------------------------------------------------------ */
 // Suba este número toda vez que mexer na lista abaixo. É o que faz o
 // catálogo novo chegar em quem já abriu o site alguma vez.
-const SEED_VERSAO = 3;
+const SEED_VERSAO = 4;
 
 const SEED = [
   { id: 'DZ-TEoWOlwx', faixa: 4, marca: 'Volkswagen', modelo: 'Jetta', versao: 'Highline 2.0 TSI',
-    anoMod: 2013, carroceria: 'Sedã', cambio: 'Automático', combustivel: 'Gasolina', destaque: true,
+    anoMod: 2013, cor: 'Branco', carroceria: 'Sedã', cambio: 'Automático', combustivel: 'Gasolina', destaque: true,
+    // álbum enviado pela loja: frente, perfil, traseira, detalhes e interior
+    fotos: ['DZ-TEoWOlwx-1', 'DZ-TEoWOlwx-2', 'DZ-TEoWOlwx-3', 'DZ-TEoWOlwx-4',
+            'DZ-TEoWOlwx-5', 'DZ-TEoWOlwx-6', 'DZ-TEoWOlwx-7', 'DZ-TEoWOlwx-8'],
     opcionais: ['Pacote GLI', 'Bancos em couro caramelo', 'Paddle shift com extensor', 'Câmbio DSG', 'Molas Eibach', 'Stage 2 Servitec', 'Downpipe', 'Catback', 'Filtro esportivo', 'Ar-condicionado digital', 'Central multimídia'],
     obs: 'Sedã esportivo para quem busca desempenho e uma condução diferenciada.' },
 
@@ -298,7 +301,9 @@ const Estoque = (() => {
   function montarSeed() {
     const agora = Date.now();
     return SEED.map((c, i) => {
-      const { fotosExtra, ...resto } = c;
+      // Por padrão o carro usa uma foto só, com o nome do próprio id. Quando a
+      // loja manda o álbum dele, é só listar os arquivos em `fotos`.
+      const { fotos, ...resto } = c;
       return {
         status: 'disponivel',
         opcionais: [],
@@ -308,7 +313,7 @@ const Estoque = (() => {
         lote: i + 1,
         ordem: i,
         criadoEm: agora - i * 864e5,
-        fotos: [`assets/fotos/${c.id}.jpg`, ...(fotosExtra || []).map(f => `assets/fotos/${f}.jpg`)],
+        fotos: (fotos || [c.id]).map(f => `assets/fotos/${f}.jpg`),
       };
     });
   }
