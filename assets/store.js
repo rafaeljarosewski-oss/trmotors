@@ -55,7 +55,7 @@ const TR = {
    ------------------------------------------------------------ */
 // Suba este número toda vez que mexer na lista abaixo. É o que faz o
 // catálogo novo chegar em quem já abriu o site alguma vez.
-const SEED_VERSAO = 4;
+const SEED_VERSAO = 5;
 
 const SEED = [
   { id: 'DZ-TEoWOlwx', faixa: 4, marca: 'Volkswagen', modelo: 'Jetta', versao: 'Highline 2.0 TSI',
@@ -157,10 +157,6 @@ const SEED = [
     opcionais: ['Motor 1.0', 'Câmbio manual', '4 portas', 'Rodas de liga leve'],
     obs: 'Econômico, compacto e ótimo para o dia a dia.' },
 
-  { id: 'DdZjeRztuDx', faixa: 2, marca: 'Chevrolet', modelo: 'Celta', versao: '1.0',
-    anoMod: 2012, carroceria: 'Hatch', combustivel: 'Flex',
-    opcionais: ['Motor 1.0', 'Ar-condicionado', 'Direção hidráulica', 'Vidros elétricos', 'Travas elétricas'],
-    obs: 'Compacto, econômico e perfeito para o dia a dia.' },
 
   { id: 'DdZ-U_AtwEw', faixa: 1, marca: 'Chevrolet', modelo: 'Corsa', versao: 'Sedan Life 1.0',
     anoMod: 2007, carroceria: 'Sedã', cambio: 'Manual', combustivel: 'Flex',

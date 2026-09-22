@@ -26,6 +26,9 @@
    TR MOTORS · site público
    ============================================================ */
 
+/* ---------- barra de progresso da rolagem ---------- */
+.progresso { position: fixed; inset: 0 auto auto 0; z-index: 80; height: 2px; background: var(--tinta); width: 0; transition: width .1s linear; }
+
 /* ---------- topo ---------- */
 .topo {
   position: fixed; inset: 0 0 auto 0; z-index: 60;
@@ -35,22 +38,21 @@
   transition: transform .45s var(--ease), background .35s, color .35s, border-color .35s;
   border-bottom: 1px solid transparent;
 }
-/* passou da capa: inverte para o modo claro */
 .topo.claro { background: rgba(255,255,255,.9); backdrop-filter: blur(14px); color: var(--tinta); border-bottom-color: var(--regua); }
-/* rolando para baixo: sai de cena */
 .topo.oculto { transform: translateY(-100%); }
 
 .marca { display: flex; align-items: center; gap: 10px; margin-right: auto; }
-.marca .mark { width: 34px; height: 34px; }
+.marca .mark { width: 34px; height: 34px; transition: transform .5s var(--ease); }
+.marca:hover .mark { transform: rotate(-12deg) scale(1.08); }
 .marca b { font-size: 14.5px; font-weight: 600; letter-spacing: .02em; }
 
 .menu { display: flex; gap: 24px; }
-.menu a { font-size: 14px; opacity: .68; transition: opacity .18s; }
+.menu a { font-size: 14px; opacity: .68; position: relative; padding-block: 3px; transition: opacity .18s; }
+.menu a::after { content: ''; position: absolute; left: 0; bottom: 0; width: 0; height: 1px; background: currentColor; transition: width .32s var(--ease); }
 .menu a:hover { opacity: 1; }
+.menu a:hover::after { width: 100%; }
 @media (max-width: 920px) { .menu { display: none; } }
 
-/* sobre a foto da capa o botão é vazado; no modo claro ele fecha em preto,
-   porque ali vira o botão mais importante da página */
 .topo .btn { background: transparent; color: currentColor; border-color: currentColor; }
 .topo .btn:hover { background: var(--papel); }
 .topo .btn:hover span { color: var(--tinta); }
@@ -61,25 +63,21 @@
 @media (max-width: 520px) { .topo .btn { display: none; } }
 
 /* ---------- capa ---------- */
-.capa { position: relative; min-height: min(92svh, 800px); display: flex; align-items: flex-end; overflow: hidden; background: #000; }
-.capa-fotos { position: absolute; inset: 0; }
+.capa { position: relative; min-height: min(94svh, 820px); display: flex; align-items: flex-end; overflow: hidden; background: #000; }
+.capa-fotos { position: absolute; inset: -6% 0; will-change: transform; }
 .capa-fotos img {
   position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
   opacity: 0; transition: opacity 1.4s var(--ease);
 }
-.capa-fotos img.ativa { opacity: 1; animation: deriva 14s linear forwards; }
-@keyframes deriva { from { transform: scale(1.02) } to { transform: scale(1.11) } }
+.capa-fotos img.ativa { opacity: 1; animation: deriva 16s linear forwards; }
+@keyframes deriva { from { transform: scale(1.02) } to { transform: scale(1.12) } }
 
 .capa-veu { position: absolute; inset: 0; background:
-  linear-gradient(to top, rgba(0,0,0,.82) 0%, rgba(0,0,0,.5) 34%, rgba(0,0,0,.12) 62%, rgba(0,0,0,.35) 100%); }
+  linear-gradient(to top, rgba(0,0,0,.84) 0%, rgba(0,0,0,.5) 34%, rgba(0,0,0,.1) 62%, rgba(0,0,0,.36) 100%); }
 
-.capa-txt { position: relative; z-index: 2; color: var(--papel); padding-block: 0 clamp(44px, 6vw, 82px); width: 100%; }
+.capa-txt { position: relative; z-index: 2; color: var(--papel); padding-block: 0 clamp(44px, 6vw, 84px); width: 100%; will-change: transform, opacity; }
 .capa-txt .rotulo { color: rgba(255,255,255,.6); }
-.capa h1 {
-  font-size: clamp(42px, 7.4vw, 108px);
-  font-weight: 500; letter-spacing: -.045em; line-height: .94;
-  margin: 16px 0 0; max-width: 13ch;
-}
+.capa h1 { font-size: clamp(42px, 7.4vw, 108px); font-weight: 500; letter-spacing: -.045em; line-height: .94; margin: 16px 0 0; max-width: 13ch; }
 .capa p.sub { margin: 20px 0 0; font-size: clamp(16px, 1.6vw, 19px); color: rgba(255,255,255,.76); max-width: 34ch; }
 .capa-cta { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 32px; }
 .capa .btn { background: var(--papel); color: var(--tinta); border-color: var(--papel); }
@@ -87,25 +85,40 @@
 .capa .btn-vazado { background: transparent; color: var(--papel); border-color: rgba(255,255,255,.45); }
 .capa .btn-vazado:hover { background: var(--papel); color: var(--tinta); border-color: var(--papel); }
 
-/* traços de progresso da troca de foto */
-.capa-tracos { position: absolute; right: var(--goteira); bottom: clamp(44px, 6vw, 82px); z-index: 2; display: flex; gap: 7px; }
+.capa-tracos { position: absolute; right: var(--goteira); bottom: clamp(44px, 6vw, 84px); z-index: 2; display: flex; gap: 7px; }
 .capa-tracos button { width: 34px; height: 2px; background: rgba(255,255,255,.3); position: relative; overflow: hidden; }
 .capa-tracos button::after { content: ''; position: absolute; inset: 0; background: var(--papel); transform: scaleX(0); transform-origin: left; }
 .capa-tracos button[aria-current="true"]::after { animation: enche 5.5s linear forwards; }
 @keyframes enche { to { transform: scaleX(1) } }
 @media (max-width: 700px) { .capa-tracos { display: none; } }
 
-/* texto da capa subindo na entrada */
 .sobe { opacity: 0; transform: translateY(26px); animation: subir .9s var(--ease) forwards; }
 @keyframes subir { to { opacity: 1; transform: none } }
 
+/* seta piscando no pé da capa */
+.rolar { position: absolute; left: 50%; bottom: 22px; translate: -50% 0; z-index: 2; color: rgba(255,255,255,.55); animation: pular 2.4s var(--ease) infinite; }
+@keyframes pular { 0%,100% { transform: translateY(0); opacity: .55 } 50% { transform: translateY(7px); opacity: 1 } }
+@media (max-width: 700px) { .rolar { display: none; } }
+
+/* ---------- números ---------- */
+.numeros { background: var(--tinta); color: var(--papel); }
+.numeros .wrap { display: grid; grid-template-columns: repeat(3, 1fr); }
+@media (max-width: 640px) { .numeros .wrap { grid-template-columns: 1fr; } }
+.numeros div { padding: clamp(30px, 4vw, 52px) 0; border-right: 1px solid #1e1e1e; padding-right: 24px; }
+.numeros div:last-child { border-right: 0; }
+@media (max-width: 640px) { .numeros div { border-right: 0; border-bottom: 1px solid #1e1e1e; padding-block: 26px; } .numeros div:last-child { border-bottom: 0; } }
+.numeros b { display: block; font-size: clamp(38px, 5vw, 64px); font-weight: 500; letter-spacing: -.045em; line-height: 1; font-variant-numeric: tabular-nums; }
+.numeros span { display: block; margin-top: 12px; font-size: 13px; color: #8f8f8f; }
+
 /* ---------- seções ---------- */
 .secao { padding-block: clamp(64px, 9vw, 126px); }
-
-/* título com revelação por máscara */
 .revela { display: block; overflow: hidden; }
 .revela > span { display: block; transform: translateY(105%); transition: transform .85s var(--ease); }
 .surge.dentro .revela > span, .revela.dentro > span { transform: none; }
+
+/* fio que se desenha */
+.fio { height: 1px; background: var(--tinta); transform: scaleX(0); transform-origin: left; transition: transform 1s var(--ease); }
+.surge.dentro .fio { transform: scaleX(1); }
 
 /* ---------- catálogo ---------- */
 .cat-topo { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; flex-wrap: wrap; }
@@ -116,9 +129,24 @@
 .procura svg { color: var(--cinza-2); flex: none; }
 .procura input { border: 0; background: none; outline: none; font-size: 15px; width: 100%; padding: 0; }
 
-/* barra de filtros */
-.barra { display: flex; align-items: center; gap: 14px 28px; flex-wrap: wrap; margin-top: 34px; padding-bottom: 20px; border-bottom: 1px solid var(--regua); }
-.escolha { position: relative; display: flex; align-items: center; }
+/* régua de marcas */
+.marcas { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; margin-top: 34px; padding-bottom: 4px; }
+.marcas::-webkit-scrollbar { display: none; }
+.mtile {
+  flex: none; position: relative; overflow: hidden; isolation: isolate;
+  min-width: 118px; padding: 16px 18px 14px; border: 1px solid var(--regua);
+  text-align: left; transition: border-color .25s, color .25s;
+}
+.mtile::before { content: ''; position: absolute; inset: 0; background: var(--tinta); transform: translateY(101%); transition: transform .38s var(--ease); z-index: -1; }
+.mtile:hover { border-color: var(--tinta); }
+.mtile:hover::before { transform: translateY(0); }
+.mtile:hover, .mtile[aria-pressed="true"] { color: var(--papel); border-color: var(--tinta); }
+.mtile[aria-pressed="true"]::before { transform: translateY(0); }
+.mtile b { display: block; font-size: 15px; font-weight: 500; letter-spacing: -.02em; white-space: nowrap; }
+.mtile i { display: block; font-style: normal; font-size: 12px; opacity: .55; margin-top: 3px; font-variant-numeric: tabular-nums; }
+
+/* barra de ajustes */
+.barra { display: flex; align-items: center; gap: 14px 24px; flex-wrap: wrap; margin-top: 20px; padding-bottom: 20px; border-bottom: 1px solid var(--regua); }
 .escolha select {
   appearance: none; border: 1px solid var(--regua-2); background: var(--papel);
   padding: 9px 34px 9px 14px; font-size: 14px; cursor: pointer; transition: border-color .18s, background .18s, color .18s;
@@ -142,31 +170,48 @@
 /* ---------- grade ---------- */
 .grade { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: clamp(42px, 4vw, 66px) clamp(18px, 2vw, 30px); margin-top: clamp(40px, 5vw, 62px); }
 
-.ficha { display: flex; flex-direction: column; cursor: pointer; opacity: 0; transform: translateY(20px); }
+.ficha { display: flex; flex-direction: column; cursor: pointer; opacity: 0; transform: translateY(22px); }
 .ficha.dentro { opacity: 1; transform: none; transition: opacity .6s var(--ease), transform .6s var(--ease); transition-delay: calc(var(--i, 0) * 45ms); }
 .ficha:focus-visible { outline: 1.5px solid var(--tinta); outline-offset: 8px; }
 
 .ficha-foto { position: relative; aspect-ratio: 4/3; overflow: hidden; background: var(--papel-3); }
+/* cortina que sobe revelando a foto quando o cartão entra */
+.ficha-foto::before {
+  content: ''; position: absolute; inset: 0; background: var(--papel); z-index: 3;
+  transform: translateY(0); transition: transform .8s var(--ease);
+  transition-delay: calc(var(--i, 0) * 45ms + 80ms);
+}
+.ficha.dentro .ficha-foto::before { transform: translateY(-101%); }
+
 .ficha-foto img { width: 100%; height: 100%; object-fit: cover; transition: transform .9s var(--ease), filter .35s; }
-.ficha:hover .ficha-foto img { transform: scale(1.045); }
+.ficha:hover .ficha-foto img { transform: scale(1.05); }
 .ficha-vazia { width: 100%; height: 100%; display: grid; place-items: center; font-size: 11px; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; color: var(--cinza-2); }
 
-/* cortina preta que sobe no hover */
-.ficha-foto::after {
-  content: ''; position: absolute; inset: 0; background: rgba(0,0,0,.14);
-  opacity: 0; transition: opacity .4s var(--ease); pointer-events: none;
+/* faixa preta que sobe no hover */
+.ver-ficha {
+  position: absolute; inset: auto 0 0 0; z-index: 2; background: var(--tinta); color: var(--papel);
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  padding: 12px 16px; font-size: 13px; font-weight: 500;
+  transform: translateY(101%); transition: transform .38s var(--ease);
 }
-.ficha:hover .ficha-foto::after { opacity: 1; }
+.ficha:hover .ver-ficha, .ficha:focus-visible .ver-ficha { transform: translateY(0); }
+@media (hover: none) { .ver-ficha { display: none; } }
 
 .selo { position: absolute; top: 12px; left: 12px; z-index: 2; background: var(--papel); color: var(--tinta);
   font-size: 10px; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; padding: 5px 9px; }
-.selo-fotos { top: auto; left: auto; right: 12px; bottom: 12px; background: rgba(255,255,255,.9); }
+.selo-fotos { top: auto; left: auto; right: 12px; bottom: 12px; background: rgba(255,255,255,.9); display: flex; align-items: center; gap: 5px; }
+.ficha:hover .selo-fotos { opacity: 0; transition: opacity .2s; }
 
 .ficha-corpo { padding-top: 16px; display: flex; flex-direction: column; flex: 1; }
 .ficha-marca { font-size: 11px; font-weight: 500; letter-spacing: .12em; text-transform: uppercase; color: var(--cinza-2); margin: 0; }
 .ficha-nome { font-size: 20px; font-weight: 500; letter-spacing: -.028em; line-height: 1.15; margin: 7px 0 0; }
 .ficha-versao { font-size: 14px; color: var(--cinza); margin: 2px 0 0; line-height: 1.4; }
-.ficha-specs { font-size: 13px; color: var(--cinza-2); margin: 12px 0 0; font-variant-numeric: tabular-nums; }
+
+/* dados com ícone */
+.dados { display: flex; flex-wrap: wrap; gap: 6px 16px; margin: 13px 0 0; }
+.dados span { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--cinza); font-variant-numeric: tabular-nums; }
+.dados svg { color: var(--cinza-2); flex: none; }
+
 .ficha-pe { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--regua); }
 .consulta { font-size: 13px; color: var(--cinza); }
 .ficha:hover .seta { gap: 13px; }
@@ -177,30 +222,39 @@
 .nada { grid-column: 1 / -1; padding: 20px 0 0; }
 .nada h3 { font-size: 22px; font-weight: 500; letter-spacing: -.03em; margin: 0 0 20px; }
 
+/* clone que voa do cartão para a ficha aberta */
+.voo { position: fixed; z-index: 95; object-fit: cover; margin: 0; pointer-events: none; }
+
 /* ---------- ficha aberta ---------- */
-.folha { position: fixed; inset: 0; z-index: 90; background: var(--papel); overflow-y: auto; overscroll-behavior: contain; animation: abrirFolha .45s var(--ease); }
-@keyframes abrirFolha { from { opacity: 0; transform: translateY(24px) } }
+.folha { position: fixed; inset: 0; z-index: 90; background: var(--papel); overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain; }
+.folha.entrando .folha-info, .folha.entrando .folha-topo, .folha.entrando .minis { opacity: 0; }
+.folha.entrando #gal img { opacity: 0; }
+.folha-info, .folha-topo, .minis { transition: opacity .35s var(--ease) .12s; }
 
 .folha-topo {
   position: sticky; top: 0; z-index: 5; display: flex; align-items: center; justify-content: space-between; gap: 16px;
   padding: 0 var(--goteira); height: 58px; background: rgba(255,255,255,.92); backdrop-filter: blur(12px); border-bottom: 1px solid var(--regua);
 }
 .folha-x { width: 34px; height: 34px; display: grid; place-items: center; transition: .18s; }
-.folha-x:hover { background: var(--tinta); color: var(--papel); }
+.folha-x:hover { background: var(--tinta); color: var(--papel); rotate: 90deg; }
 
 .folha-grade { display: grid; grid-template-columns: 1.2fr 1fr; align-items: start; }
+/* sem isto a coluna não encolhe: a barra de botões tem margem negativa e
+   acaba esticando a trilha, criando rolagem lateral no celular */
+.folha-grade > * { min-width: 0; }
 @media (max-width: 1000px) { .folha-grade { grid-template-columns: 1fr; } }
 @media (min-width: 1001px) { .folha-media { position: sticky; top: 58px; } }
 
 .gal { position: relative; aspect-ratio: 4/3; overflow: hidden; background: var(--papel-3); }
-.gal img { width: 100%; height: 100%; object-fit: cover; animation: surgirFoto .5s var(--ease); }
-@keyframes surgirFoto { from { opacity: 0; transform: scale(1.03) } }
+.gal img { width: 100%; height: 100%; object-fit: cover; animation: surgirFoto .45s var(--ease); }
+@keyframes surgirFoto { from { opacity: 0; transform: scale(1.025) } }
 .gal-nav { position: absolute; top: 50%; translate: 0 -50%; width: 40px; height: 40px; background: rgba(255,255,255,.92); display: grid; place-items: center; transition: .18s; }
 .gal-nav:hover { background: var(--tinta); color: var(--papel); }
 .gal-nav.ant { left: 14px; } .gal-nav.prox { right: 14px; }
 .gal-pos { position: absolute; left: 14px; bottom: 14px; background: rgba(255,255,255,.92); font-size: 11px; font-weight: 500; letter-spacing: .08em; padding: 5px 9px; font-variant-numeric: tabular-nums; }
 .minis { display: flex; gap: 6px; padding: 14px; overflow-x: auto; }
 .minis button { flex: none; width: 76px; aspect-ratio: 4/3; overflow: hidden; opacity: .45; transition: .18s; }
+.minis button:hover { opacity: .8; }
 .minis button[aria-current="true"] { opacity: 1; }
 .minis img { width: 100%; height: 100%; object-fit: cover; }
 
@@ -236,20 +290,21 @@
 .pergunta { margin-top: 34px; }
 .pergunta > p { font-size: 11px; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; color: #8a8a8a; margin: 0 0 12px; }
 .escolhas { display: flex; flex-wrap: wrap; gap: 7px; }
-.escolhas button { height: 38px; padding-inline: 15px; border: 1px solid #333; color: #c9c9c9; font-size: 14px; transition: .16s; }
+.escolhas button { position: relative; overflow: hidden; isolation: isolate; height: 38px; padding-inline: 15px; border: 1px solid #333; color: #c9c9c9; font-size: 14px; transition: color .2s, border-color .2s; }
+.escolhas button::before { content: ''; position: absolute; inset: 0; background: var(--papel); transform: translateY(101%); transition: transform .32s var(--ease); z-index: -1; }
 .escolhas button:hover { border-color: var(--papel); color: var(--papel); }
-.escolhas button[aria-pressed="true"] { background: var(--papel); color: var(--tinta); border-color: var(--papel); }
+.escolhas button[aria-pressed="true"] { color: var(--tinta); border-color: var(--papel); }
+.escolhas button[aria-pressed="true"]::before { transform: translateY(0); }
 
 .previa { border: 1px solid #333; padding: 22px 20px; font-size: 14.5px; line-height: 1.8; white-space: pre-line; min-height: 158px; }
 .previa .vago { color: #5e5e5e; }
 
 /* ---------- serviços ---------- */
 .servicos { border-top: 1px solid var(--tinta); margin-top: clamp(32px, 4vw, 50px); }
-.serv { display: grid; grid-template-columns: 44px 1fr auto; gap: 20px; align-items: center; padding: 26px 0; border-bottom: 1px solid var(--regua); position: relative; }
-.serv::before { content: ''; position: absolute; inset: 0 auto 0 0; width: 0; background: var(--papel-2); transition: width .5s var(--ease); z-index: -1; }
+.serv { display: grid; grid-template-columns: 44px 1fr auto; gap: 20px; align-items: center; padding: 26px 0; border-bottom: 1px solid var(--regua); position: relative; isolation: isolate; transition: padding-inline .42s var(--ease); }
+.serv::before { content: ''; position: absolute; inset: 0; background: var(--papel-2); width: 0; transition: width .52s var(--ease); z-index: -1; }
+.serv:hover { padding-inline: 16px; }
 .serv:hover::before { width: 100%; }
-.serv { transition: padding-inline .4s var(--ease); }
-.serv:hover { padding-inline: 14px; }
 .serv-num { font-size: 12px; font-weight: 500; color: var(--cinza-2); font-variant-numeric: tabular-nums; }
 .serv h3 { font-size: clamp(19px, 2vw, 26px); font-weight: 500; letter-spacing: -.03em; margin: 0; }
 .serv p { font-size: 14px; color: var(--cinza); margin: 4px 0 0; }
@@ -265,43 +320,43 @@
 .horas li { display: flex; justify-content: space-between; gap: 16px; padding: 10px 0; border-bottom: 1px solid var(--regua); font-size: 14.5px; }
 .horas span:first-child { color: var(--cinza); }
 .horas span:last-child { font-variant-numeric: tabular-nums; }
-.mapa { aspect-ratio: 16/10; background: var(--papel-3); }
-.mapa iframe { width: 100%; height: 100%; border: 0; display: block; filter: grayscale(1) contrast(1.04); }
+.mapa { aspect-ratio: 16/10; background: var(--papel-3); overflow: hidden; }
+.mapa iframe { width: 100%; height: 100%; border: 0; display: block; filter: grayscale(1) contrast(1.04); transition: filter .5s; }
+.mapa:hover iframe { filter: grayscale(.2) contrast(1); }
 
 /* ---------- rodapé ---------- */
 .rodape { background: var(--tinta); color: var(--papel); padding-block: clamp(56px, 7vw, 92px) 0; }
 .rodape-grade { display: grid; grid-template-columns: 1.3fr 1fr 1fr; gap: 48px; }
 @media (max-width: 860px) { .rodape-grade { grid-template-columns: 1fr 1fr; gap: 40px 32px; } .rodape-marca { grid-column: 1 / -1; } }
 @media (max-width: 500px) { .rodape-grade { grid-template-columns: 1fr; } }
-
 .rodape-marca .marca { margin-bottom: 20px; }
 .rodape-marca .mark { width: 54px; height: 54px; }
 .rodape-marca .marca b { font-size: 17px; }
 .rodape-marca p { color: #a0a0a0; font-size: 14.5px; line-height: 1.65; margin: 0; max-width: 30ch; }
-
 .rodape h4 { font-size: 11px; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; color: #7d7d7d; margin: 0 0 18px; }
 .rodape ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
 .rodape a, .rodape li { font-size: 14.5px; color: #c4c4c4; }
-
-/* linha de contato com o ícone da rede */
-.contato { display: flex; align-items: flex-start; gap: 12px; transition: color .18s; }
-.contato:hover { color: var(--papel); }
+.contato { display: flex; align-items: flex-start; gap: 12px; transition: color .18s, transform .3s var(--ease); }
+.contato:hover { color: var(--papel); transform: translateX(4px); }
 .contato svg { flex: none; margin-top: 2px; opacity: .6; transition: opacity .18s; }
 .contato:hover svg { opacity: 1; }
-.contato span { display: block; }
 .contato small { display: block; font-size: 12px; color: #7d7d7d; margin-top: 2px; }
-
 .rodape-nav a { position: relative; }
 .rodape-nav a::after { content: ''; position: absolute; left: 0; bottom: -3px; width: 0; height: 1px; background: var(--papel); transition: width .3s var(--ease); }
 .rodape-nav a:hover { color: var(--papel); }
 .rodape-nav a:hover::after { width: 100%; }
-
 .rodape-fim { margin-top: clamp(48px, 6vw, 72px); border-top: 1px solid #242424; padding-block: 22px 28px; display: flex; justify-content: space-between; gap: 14px; flex-wrap: wrap; font-size: 12px; color: #6a6a6a; }
 
 /* ---------- atalhos ---------- */
 .flutua { position: fixed; right: 22px; bottom: 22px; z-index: 70; width: 52px; height: 52px; background: var(--tinta); color: var(--papel); display: grid; place-items: center; transition: transform .22s var(--ease); }
-.flutua:hover { transform: translateY(-3px) scale(1.04); }
+.flutua:hover { transform: translateY(-3px) scale(1.05); }
 @media (max-width: 720px) { .flutua { bottom: 76px; right: 16px; width: 46px; height: 46px; } }
+
+.ao-topo { position: fixed; right: 22px; bottom: 86px; z-index: 70; width: 52px; height: 52px; border: 1px solid var(--regua-2); background: var(--papel); color: var(--tinta); display: grid; place-items: center;
+  opacity: 0; transform: translateY(10px); pointer-events: none; transition: opacity .3s, transform .3s var(--ease), background .2s, color .2s; }
+.ao-topo.visivel { opacity: 1; transform: none; pointer-events: auto; }
+.ao-topo:hover { background: var(--tinta); color: var(--papel); border-color: var(--tinta); }
+@media (max-width: 720px) { .ao-topo { bottom: 134px; right: 16px; width: 46px; height: 46px; } }
 
 .barra-baixo { position: fixed; inset: auto 0 0 0; z-index: 68; display: none; gap: 1px; background: var(--regua); padding-bottom: env(safe-area-inset-bottom); }
 .barra-baixo .btn { flex: 1; border: 0; height: 54px; }
@@ -314,6 +369,7 @@
 
 <body>
 <a class="pular" href="#estoque">Pular para o estoque</a>
+<div class="progresso" id="progresso" aria-hidden="true"></div>
 
 <header class="topo" id="topo">
   <a class="marca" href="#inicio" aria-label="TR Motors, início">
@@ -335,7 +391,7 @@
 <section class="capa">
   <div class="capa-fotos" id="capaFotos" aria-hidden="true"></div>
   <div class="capa-veu" aria-hidden="true"></div>
-  <div class="wrap capa-txt">
+  <div class="wrap capa-txt" id="capaTxt">
     <p class="rotulo sobe" style="animation-delay:.1s">Panambi · Rio Grande do Sul</p>
     <h1 class="sobe" style="animation-delay:.2s">Achar o carro certo pode ser simples.</h1>
     <p class="sub sobe" style="animation-delay:.32s">Todo o estoque da loja em um lugar só. Escolheu, fala direto no WhatsApp.</p>
@@ -345,6 +401,18 @@
     </div>
   </div>
   <div class="capa-tracos" id="capaTracos"></div>
+  <span class="rolar" aria-hidden="true">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+  </span>
+</section>
+
+<!-- NÚMEROS -->
+<section class="numeros">
+  <div class="wrap surge">
+    <div><b data-conta="0" id="nCarros">0</b><span>carros no pátio agora</span></div>
+    <div><b data-conta="0" id="nMarcas">0</b><span>marcas no estoque</span></div>
+    <div><b>100%</b><span>procedência conferida, entrega na região</span></div>
+  </div>
 </section>
 
 <!-- ESTOQUE -->
@@ -357,9 +425,10 @@
     </label>
   </div>
 
+  <div class="marcas" id="marcas" role="group" aria-label="Filtrar por marca"></div>
+
   <div class="barra">
     <div class="escolha"><select id="fTipo" aria-label="Tipo de carroceria"></select></div>
-    <div class="escolha"><select id="fMarca" aria-label="Marca"></select></div>
     <div class="escolha"><select id="fFaixa" aria-label="Faixa de valor"></select></div>
     <button class="limpar" id="limpar" hidden>Limpar filtros</button>
     <div class="ajustes">
@@ -438,12 +507,10 @@
         </a>
         <p>Venda, troca, financiamento, refinanciamento e consignação em Panambi e região.</p>
       </div>
-
       <div>
         <h4>Contato</h4>
         <ul id="contatos"></ul>
       </div>
-
       <div class="rodape-nav">
         <h4>Navegar</h4>
         <ul>
@@ -465,6 +532,9 @@
 <div class="folha" id="folha" hidden role="dialog" aria-modal="true" aria-label="Detalhes do carro"></div>
 
 <a class="flutua" id="fabWa" href="#" target="_blank" rel="noopener" aria-label="Falar no WhatsApp"></a>
+<button class="ao-topo" id="aoTopo" aria-label="Voltar ao topo">
+  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+</button>
 
 <nav class="barra-baixo" aria-label="Ações rápidas">
   <a class="btn" href="#estoque">Estoque</a>
@@ -478,13 +548,17 @@
    ============================================================ */
 const $  = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const calmo = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 let CARROS = [];
 const estado = { tipo: '', marca: '', faixa: '', busca: '', ordem: 'ordem', vendidos: false };
 
-/* ---------- marcas reais das redes ---------- */
 const ICO = {
   seta: '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 5l7 7-7 7"/></svg>',
+  ano: '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="1.5"/><path d="M8 3v4M16 3v4M3.5 10h17" stroke-linecap="round"/></svg>',
+  km: '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 18a9 9 0 1 1 16 0" stroke-linecap="round"/><path d="M12 14.5 16 9" stroke-linecap="round"/></svg>',
+  cambio: '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M7 4v16M17 4v7M7 11h10M12 4v7"/><circle cx="7" cy="4" r="1.3"/><circle cx="17" cy="4" r="1.3"/><circle cx="12" cy="4" r="1.3"/></svg>',
+  foto: '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><rect x="3" y="6" width="18" height="14" rx="2"/><circle cx="8.5" cy="11" r="1.6"/><path d="m4 18 5-4 3.5 2.8L16 14l4 3.4" stroke-linejoin="round"/></svg>',
   whatsapp: '<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>',
   instagram: '<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 0C8.74 0 8.333.015 7.053.072 5.775.132 4.905.333 4.14.63c-.789.306-1.459.717-2.126 1.384S.935 3.35.63 4.14C.333 4.905.131 5.775.072 7.053.012 8.333 0 8.74 0 12s.015 3.667.072 4.947c.06 1.277.261 2.148.558 2.913.306.788.717 1.459 1.384 2.126.667.666 1.336 1.079 2.126 1.384.766.296 1.636.499 2.913.558C8.333 23.988 8.74 24 12 24s3.667-.015 4.947-.072c1.277-.06 2.148-.262 2.913-.558.788-.306 1.459-.718 2.126-1.384.666-.667 1.079-1.335 1.384-2.126.296-.765.499-1.636.558-2.913.06-1.28.072-1.687.072-4.947s-.015-3.667-.072-4.947c-.06-1.277-.262-2.149-.558-2.913-.306-.789-.718-1.459-1.384-2.126C21.319 1.347 20.651.935 19.86.63c-.765-.297-1.636-.499-2.913-.558C15.667.012 15.26 0 12 0zm0 2.16c3.203 0 3.585.016 4.85.071 1.17.055 1.805.249 2.227.415.562.217.96.477 1.382.896.419.42.679.819.896 1.381.164.422.36 1.057.413 2.227.057 1.266.07 1.646.07 4.85s-.015 3.585-.074 4.85c-.061 1.17-.256 1.805-.421 2.227-.224.562-.479.96-.899 1.382-.419.419-.824.679-1.38.896-.42.164-1.065.36-2.235.413-1.274.057-1.649.07-4.859.07-3.211 0-3.586-.015-4.859-.074-1.171-.061-1.816-.256-2.236-.421-.569-.224-.96-.479-1.379-.899-.421-.419-.69-.824-.9-1.38-.165-.42-.359-1.065-.42-2.235-.045-1.26-.061-1.649-.061-4.844 0-3.196.016-3.586.061-4.861.061-1.17.255-1.814.42-2.234.21-.57.479-.96.9-1.381.419-.419.81-.689 1.379-.898.42-.166 1.051-.361 2.221-.421 1.275-.045 1.65-.06 4.859-.06l.045.03zm0 3.678a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm7.846-10.405a1.441 1.441 0 01-2.88 0 1.44 1.44 0 012.88 0z"/></svg>',
   local: '<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a7 7 0 00-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 00-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg>',
@@ -508,7 +582,7 @@ $('#contatos').innerHTML = [
 ].map(c => `<li><a class="contato" href="${c.h}" target="_blank" rel="noopener">${ICO[c.ic]}<span>${c.t}<small>${c.s}</small></span></a></li>`).join('');
 
 /* ---------- capa: fotos que se revezam ---------- */
-const CAPA = ['DaYqtlTtmt0', 'DdSKoAptRF6', 'DdFDISwtIna', 'Dc4WwB_N1fq'];
+const CAPA = ['DaYqtlTtmt0', 'DdSKoAptRF6', 'DZ-TEoWOlwx-1', 'Dc4WwB_N1fq'];
 let capaI = 0, capaTimer;
 
 $('#capaFotos').innerHTML = CAPA.map((id, i) =>
@@ -523,22 +597,41 @@ function trocarCapa(i) {
   clearTimeout(capaTimer);
   capaTimer = setTimeout(() => trocarCapa(capaI + 1), 5500);
 }
-capaTimer = setTimeout(() => trocarCapa(1), 5500);
+if (!calmo) capaTimer = setTimeout(() => trocarCapa(1), 5500);
 $('#capaTracos').addEventListener('click', e => {
   const b = e.target.closest('[data-capa]');
   if (b) trocarCapa(Number(b.dataset.capa));
 });
 
-/* ---------- topo que some ao descer e inverte fora da capa ---------- */
-let ultimoY = 0;
-addEventListener('scroll', () => {
+/* ---------- rolagem: progresso, topo, paralaxe ---------- */
+let ultimoY = 0, tickando = false;
+function naRolagem() {
   const y = scrollY;
-  const alturaCapa = document.querySelector('.capa').offsetHeight - 66;
+  const total = document.documentElement.scrollHeight - innerHeight;
+  $('#progresso').style.width = (total > 0 ? (y / total) * 100 : 0) + '%';
+
+  const capa = document.querySelector('.capa');
+  const alturaCapa = capa.offsetHeight - 66;
   $('#topo').classList.toggle('claro', y > alturaCapa);
   $('#markTopo').className = 'mark ' + (y > alturaCapa ? 'mark-claro' : 'mark-escuro');
   $('#topo').classList.toggle('oculto', y > alturaCapa + 200 && y > ultimoY);
+  $('#aoTopo').classList.toggle('visivel', y > alturaCapa + 400);
+
+  // a foto da capa anda mais devagar que a página, e o texto sai antes
+  if (!calmo && y < capa.offsetHeight) {
+    $('#capaFotos').style.transform = `translateY(${y * 0.32}px)`;
+    const t = Math.min(1, y / (capa.offsetHeight * 0.75));
+    $('#capaTxt').style.transform = `translateY(${y * 0.18}px)`;
+    $('#capaTxt').style.opacity = String(1 - t);
+  }
   ultimoY = y;
+  tickando = false;
+}
+addEventListener('scroll', () => {
+  if (!tickando) { tickando = true; requestAnimationFrame(naRolagem); }
 }, { passive: true });
+
+$('#aoTopo').addEventListener('click', () => scrollTo({ top: 0, behavior: calmo ? 'auto' : 'smooth' }));
 
 /* ---------- serviços ---------- */
 const SERVICOS = [
@@ -557,34 +650,35 @@ $('#servicos-lista').innerHTML = SERVICOS.map((s, i) => `
 /* ============================================================
    Catálogo
    ============================================================ */
-function disponiveis() { return CARROS.filter(c => c.status !== 'vendido'); }
+const disponiveis = () => CARROS.filter(c => c.status !== 'vendido');
 
 function montarFiltros() {
   const base = disponiveis();
   const conta = (campo, v) => base.filter(c => c[campo] === v).length;
 
+  // régua de marcas
+  const marcas = [...new Set(base.map(c => c.marca))].sort((a, b) => a.localeCompare(b, 'pt-BR'));
+  $('#marcas').innerHTML =
+    `<button class="mtile" data-marca="" aria-pressed="${!estado.marca}"><b>Todas</b><i>${base.length} carros</i></button>` +
+    marcas.map(m => `<button class="mtile" data-marca="${esc(m)}" aria-pressed="${estado.marca === m}"><b>${esc(m)}</b><i>${conta('marca', m)} ${conta('marca', m) === 1 ? 'carro' : 'carros'}</i></button>`).join('');
+
   const tipos = CARROCERIAS.filter(t => conta('carroceria', t));
   $('#fTipo').innerHTML = `<option value="">Todos os tipos</option>` +
     tipos.map(t => `<option value="${t}">${t} (${conta('carroceria', t)})</option>`).join('');
-
-  const marcas = [...new Set(base.map(c => c.marca))].sort((a, b) => a.localeCompare(b, 'pt-BR'));
-  $('#fMarca').innerHTML = `<option value="">Todas as marcas</option>` +
-    marcas.map(m => `<option value="${m}">${m} (${conta('marca', m)})</option>`).join('');
 
   $('#fFaixa').innerHTML = `<option value="">Qualquer valor</option>` +
     FAIXAS.filter(f => base.some(c => c.faixa === f.n))
       .map(f => `<option value="${f.n}">${f.rot} (${base.filter(c => c.faixa === f.n).length})</option>`).join('');
 
   $('#fTipo').value = estado.tipo;
-  $('#fMarca').value = estado.marca;
   $('#fFaixa').value = estado.faixa;
   pintarEscolhas();
 }
 
 function pintarEscolhas() {
   $('#fTipo').classList.toggle('ativo', !!estado.tipo);
-  $('#fMarca').classList.toggle('ativo', !!estado.marca);
   $('#fFaixa').classList.toggle('ativo', !!estado.faixa);
+  $$('#marcas .mtile').forEach(b => b.setAttribute('aria-pressed', b.dataset.marca === estado.marca));
   $('#limpar').hidden = !(estado.tipo || estado.marca || estado.faixa || estado.busca);
 }
 
@@ -630,19 +724,26 @@ function cartao(c, i) {
     ? waLink(`Olá! Vi que o ${nomeCarro(c)} ${fmtAno(c)} já foi vendido. Vocês têm algo parecido no estoque?`)
     : waCarro(c);
 
+  const dados = [
+    fmtAno(c) && `<span>${ICO.ano}${fmtAno(c)}</span>`,
+    c.km && `<span>${ICO.km}${(c.km).toLocaleString('pt-BR')} km</span>`,
+    c.cambio && `<span>${ICO.cambio}${esc(c.cambio)}</span>`,
+  ].filter(Boolean).join('');
+
   return `
   <article class="ficha ${vendido ? 'saiu' : ''}" data-id="${esc(c.id)}" style="--i:${Math.min(i, 11)}" tabindex="0" role="button"
            aria-label="Abrir ficha do ${esc(nomeCompleto(c))}">
     <div class="ficha-foto">
       ${selo}
       ${capa}
-      ${fotos.length > 1 ? `<span class="selo selo-fotos">${fotos.length} fotos</span>` : ''}
+      ${fotos.length > 1 ? `<span class="selo selo-fotos">${ICO.foto}${fotos.length}</span>` : ''}
+      <span class="ver-ficha">Ver ficha completa ${ICO.seta}</span>
     </div>
     <div class="ficha-corpo">
       <p class="ficha-marca">${esc(c.marca)}</p>
       <h3 class="ficha-nome">${esc(c.modelo)}</h3>
       <p class="ficha-versao">${esc(c.versao || '')}</p>
-      <p class="ficha-specs">${esc(specs(c).join('  ·  '))}</p>
+      <div class="dados">${dados}</div>
       <div class="ficha-pe">
         <span class="consulta">${vendido ? 'Vendido' : 'Sob consulta'}</span>
         <a class="seta" href="${link}" target="_blank" rel="noopener" data-parar>${vendido ? 'Parecidos' : 'Falar'} ${ICO.seta}</a>
@@ -651,7 +752,6 @@ function cartao(c, i) {
   </article>`;
 }
 
-/** Observador que faz os cartões entrarem escalonados. */
 const olhoFicha = new IntersectionObserver(ents => {
   ents.forEach(e => { if (e.isIntersecting) { e.target.classList.add('dentro'); olhoFicha.unobserve(e.target); } });
 }, { rootMargin: '0px 0px -40px 0px' });
@@ -674,13 +774,7 @@ function desenhar() {
 function contar(el, alvo) {
   const de = Number(el.textContent) || 0;
   if (de === alvo) return;
-
-  // requestAnimationFrame não roda com a aba em segundo plano e a contagem
-  // ficaria parada no zero. Nesses casos o número entra direto.
-  if (document.hidden || matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    el.textContent = alvo;
-    return;
-  }
+  if (document.hidden || calmo) { el.textContent = alvo; return; }
 
   const ini = performance.now(), dur = 700;
   const rede = setTimeout(() => { el.textContent = alvo; }, dur + 400);
@@ -693,13 +787,18 @@ function contar(el, alvo) {
   requestAnimationFrame(passo);
 }
 
+$('#marcas').addEventListener('click', e => {
+  const b = e.target.closest('[data-marca]');
+  if (!b) return;
+  estado.marca = b.dataset.marca;
+  desenhar();
+});
 $('#fTipo').addEventListener('change', e => { estado.tipo = e.target.value; desenhar(); });
-$('#fMarca').addEventListener('change', e => { estado.marca = e.target.value; desenhar(); });
 $('#fFaixa').addEventListener('change', e => { estado.faixa = e.target.value; desenhar(); });
 $('#limpar').addEventListener('click', () => {
   Object.assign(estado, { tipo: '', marca: '', faixa: '', busca: '' });
   $('#procura').value = '';
-  $('#fTipo').value = ''; $('#fMarca').value = ''; $('#fFaixa').value = '';
+  $('#fTipo').value = ''; $('#fFaixa').value = '';
   desenhar();
 });
 
@@ -714,14 +813,14 @@ $('#verVendidos').addEventListener('change', e => { estado.vendidos = e.target.c
 $('#grade').addEventListener('click', e => {
   if (e.target.closest('[data-parar]')) return;
   const f = e.target.closest('.ficha');
-  if (f) abrir(f.dataset.id);
+  if (f) abrir(f.dataset.id, f);
 });
 $('#grade').addEventListener('keydown', e => {
   if (e.key !== 'Enter' && e.key !== ' ') return;
   const f = e.target.closest('.ficha');
   if (!f) return;
   e.preventDefault();
-  abrir(f.dataset.id);
+  abrir(f.dataset.id, f);
 });
 
 /* ============================================================
@@ -729,7 +828,46 @@ $('#grade').addEventListener('keydown', e => {
    ============================================================ */
 let gal = { fotos: [], i: 0, foco: FOCO_PADRAO };
 
-function abrir(id) {
+/** A foto do cartão voa até o lugar dela na ficha, em vez de a ficha
+    simplesmente aparecer. É o que dá a sensação de continuidade. */
+const DUR_VOO = 460;
+
+function voar(origem) {
+  const alvo = $('#gal');
+  // Em aba de segundo plano a animação não avança e a promessa nunca resolve.
+  if (!origem || !alvo || calmo || document.hidden) return Promise.resolve();
+
+  const de = origem.getBoundingClientRect();
+  const para = alvo.getBoundingClientRect();
+  if (!de.width || !para.width) return Promise.resolve();
+
+  const clone = origem.cloneNode();
+  clone.className = 'voo';
+  Object.assign(clone.style, {
+    left: de.left + 'px', top: de.top + 'px',
+    width: de.width + 'px', height: de.height + 'px',
+  });
+  document.body.appendChild(clone);
+
+  const anim = clone.animate([
+    { left: de.left + 'px', top: de.top + 'px', width: de.width + 'px', height: de.height + 'px' },
+    { left: para.left + 'px', top: para.top + 'px', width: para.width + 'px', height: para.height + 'px' },
+  ], { duration: DUR_VOO, easing: 'cubic-bezier(.22,1,.36,1)', fill: 'forwards' });
+
+  // rede de segurança: se a animação travar, a ficha aparece do mesmo jeito
+  return Promise.race([
+    anim.finished.catch(() => {}),
+    new Promise(r => setTimeout(r, DUR_VOO + 250)),
+  ]).then(() => clone.remove());
+}
+
+/** Nunca deixa a ficha presa invisível nem clone perdido na tela. */
+function limparVoo() {
+  $('#folha').classList.remove('entrando');
+  $$('.voo').forEach(el => el.remove());
+}
+
+async function abrir(id, elCard) {
   const c = CARROS.find(x => x.id === id);
   if (!c) return;
 
@@ -789,10 +927,13 @@ function abrir(id) {
 
   pintarGal();
   $('#folha').hidden = false;
+  $('#folha').classList.add('entrando');
   document.body.style.overflow = 'hidden';
   $('#folha').scrollTop = 0;
-  $('.folha-x').focus();
   history.replaceState(null, '', '#carro=' + c.id);
+
+  try { await voar(elCard?.querySelector('.ficha-foto img')); } finally { limparVoo(); }
+  $('.folha-x')?.focus();
 }
 
 function pintarGal() {
@@ -814,6 +955,7 @@ function pintarGal() {
 }
 
 function fechar() {
+  limparVoo();
   $('#folha').hidden = true;
   document.body.style.overflow = '';
   history.replaceState(null, '', location.pathname + location.search);
@@ -889,9 +1031,34 @@ pintarPedido();
 
 /* ---------- entrada por rolagem ---------- */
 const olho = new IntersectionObserver(ents => {
-  ents.forEach(e => { if (e.isIntersecting) { e.target.classList.add('dentro'); olho.unobserve(e.target); } });
+  ents.forEach(e => {
+    if (!e.isIntersecting) return;
+    e.target.classList.add('dentro');
+    olho.unobserve(e.target);
+  });
 }, { rootMargin: '0px 0px -40px 0px' });
 $$('.surge').forEach(el => olho.observe(el));
+
+/** Os números da faixa preta só sobem quando ela entra na tela. Este
+    observador é ligado depois que o estoque carrega, senão ele dispararia
+    com o alvo ainda em zero. */
+function ligarContadores() {
+  const els = $$('[data-conta]');
+  const agora = el => contar(el, Number(el.dataset.alvo || 0));
+
+  // Com a aba em segundo plano o observador não dispara, e o número ficaria
+  // parado no zero para sempre. Nesse caso ele entra direto.
+  if (document.hidden) return els.forEach(agora);
+
+  const olhoNum = new IntersectionObserver(ents => {
+    ents.forEach(e => {
+      if (!e.isIntersecting) return;
+      agora(e.target);
+      olhoNum.unobserve(e.target);
+    });
+  }, { rootMargin: '0px 0px -40px 0px' });
+  els.forEach(el => olhoNum.observe(el));
+}
 
 /* ---------- partida ---------- */
 (async function partir() {
@@ -904,6 +1071,13 @@ $$('.surge').forEach(el => olho.observe(el));
   }
   montarFiltros();
   desenhar();
+
+  const base = disponiveis();
+  $('#nCarros').dataset.alvo = base.length;
+  $('#nMarcas').dataset.alvo = new Set(base.map(c => c.marca)).size;
+  ligarContadores();
+
+  naRolagem();
 
   const m = location.hash.match(/carro=([\w-]+)/);
   if (m) setTimeout(() => abrir(m[1]), 100);
