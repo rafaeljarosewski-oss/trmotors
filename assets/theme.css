@@ -1,0 +1,158 @@
+/* ============================================================
+   TR MOTORS · sistema visual
+   Preto e branco, uma família só. A foto do carro é a única
+   coisa colorida da página.
+   ============================================================ */
+
+@import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600&display=swap');
+
+:root {
+  --papel:   #ffffff;
+  --papel-2: #f6f6f5;
+  --papel-3: #ededec;
+  --tinta:   #000000;
+  --cinza:   #767676;
+  --cinza-2: #a6a6a6;
+  --regua:   #e8e8e6;
+  --regua-2: #d2d2ce;
+
+  --sans: 'Switzer', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+
+  --goteira: clamp(20px, 5vw, 72px);
+  --maxw: 1500px;
+
+  --ease: cubic-bezier(.22, 1, .36, 1);
+}
+
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+/* O [hidden] do HTML é regra fraca do navegador: qualquer display numa
+   classe passa por cima dele. Aqui ele vale sempre. */
+[hidden] { display: none !important; }
+
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation-duration: .001ms !important; transition-duration: .001ms !important; }
+}
+
+body {
+  margin: 0;
+  background: var(--papel);
+  color: var(--tinta);
+  font-family: var(--sans);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.5;
+  letter-spacing: -.011em;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+
+img { max-width: 100%; display: block; }
+a { color: inherit; text-decoration: none; }
+button, input, select, textarea { font: inherit; letter-spacing: inherit; color: inherit; }
+button { cursor: pointer; border: 0; background: none; padding: 0; }
+::selection { background: var(--tinta); color: var(--papel); }
+
+:focus-visible { outline: 1.5px solid var(--tinta); outline-offset: 3px; }
+
+/* ---------- estrutura ---------- */
+.wrap { width: 100%; max-width: var(--maxw); margin-inline: auto; padding-inline: var(--goteira); }
+.escuro { background: var(--tinta); color: var(--papel); }
+.escuro :focus-visible { outline-color: var(--papel); }
+
+/* ---------- tipografia ---------- */
+/* Sem mono: o papel de "dado" fica com o mesmo tipo, em corpo menor,
+   caixa alta e entreletra aberta. Menos famílias, menos ruído. */
+.rotulo {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--cinza);
+  margin: 0;
+}
+.num { font-variant-numeric: tabular-nums; }
+
+.titulo { font-weight: 500; letter-spacing: -.035em; line-height: 1; margin: 0; }
+.texto { color: var(--cinza); line-height: 1.6; }
+
+/* ---------- botões ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  height: 46px;
+  padding-inline: 24px;
+  border: 1px solid var(--tinta);
+  background: var(--tinta);
+  color: var(--papel);
+  font-size: 14.5px;
+  font-weight: 500;
+  transition: background .18s, color .18s, border-color .18s;
+}
+.btn:hover { background: var(--papel); color: var(--tinta); }
+.btn svg { flex: none; }
+
+.btn-vazado { background: transparent; color: var(--tinta); border-color: var(--regua-2); }
+.btn-vazado:hover { background: var(--tinta); color: var(--papel); border-color: var(--tinta); }
+
+.escuro .btn { background: var(--papel); color: var(--tinta); border-color: var(--papel); }
+.escuro .btn:hover { background: transparent; color: var(--papel); }
+.escuro .btn-vazado { background: transparent; color: var(--papel); border-color: #333; }
+.escuro .btn-vazado:hover { background: var(--papel); color: var(--tinta); border-color: var(--papel); }
+
+.btn-p { height: 36px; padding-inline: 16px; font-size: 13.5px; }
+.btn-bloco { width: 100%; }
+
+/* link com seta que anda no hover */
+.seta { display: inline-flex; align-items: center; gap: 7px; font-size: 13.5px; font-weight: 500; transition: gap .28s var(--ease); }
+.seta:hover { gap: 13px; }
+
+/* ---------- marca ---------- */
+/* O arquivo do logo é branco sobre preto. No fundo claro ele é invertido e o
+   multiply come o branco que sobra; no fundo escuro o screen come o preto.
+   Assim não fica caixa em volta em nenhum dos dois. */
+.mark { display: block; flex: none; }
+.mark img { width: 100%; height: 100%; object-fit: contain; display: block; }
+.mark-claro img { filter: invert(1); mix-blend-mode: multiply; }
+.mark-escuro img { mix-blend-mode: screen; }
+
+/* ---------- réguas ---------- */
+.regua { height: 1px; background: var(--regua); border: 0; margin: 0; }
+
+/* ---------- formulários ---------- */
+.campo { display: flex; flex-direction: column; gap: 6px; }
+.campo > label { font-size: 11px; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; color: var(--cinza); }
+.input, .select, .textarea {
+  width: 100%;
+  background: var(--papel);
+  border: 1px solid var(--regua-2);
+  border-radius: 0;
+  padding: 11px 13px;
+  font-size: 15px;
+  transition: border-color .16s;
+}
+.input:focus, .select:focus, .textarea:focus { outline: none; border-color: var(--tinta); }
+.input::placeholder, .textarea::placeholder { color: var(--cinza-2); }
+.select {
+  appearance: none; cursor: pointer; padding-right: 34px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' fill='none' stroke='%23000' stroke-width='1.3'%3E%3Cpath d='M1 1 5 5 9 1'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 13px center;
+}
+.textarea { resize: vertical; min-height: 88px; line-height: 1.6; }
+
+/* ---------- barra de rolagem ---------- */
+::-webkit-scrollbar { width: 11px; height: 11px; }
+::-webkit-scrollbar-track { background: var(--papel); }
+::-webkit-scrollbar-thumb { background: var(--regua-2); border: 3px solid var(--papel); }
+::-webkit-scrollbar-thumb:hover { background: var(--cinza-2); }
+
+/* ---------- entrada por rolagem ---------- */
+.surge { opacity: 0; transform: translateY(10px); transition: opacity .6s var(--ease), transform .6s var(--ease); }
+.surge.dentro { opacity: 1; transform: none; }
+
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }

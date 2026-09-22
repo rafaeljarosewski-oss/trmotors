@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Painel · TR Motors</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#ffffff">
+<link rel="icon" href="assets/marca.png">
+<link rel="stylesheet" href="assets/theme.css">
+
+<style>
+/* ============================================================
+   TR MOTORS · painel da loja
+   ============================================================ */
+
+/* ---------- entrada ---------- */
+.porta { min-height: 100svh; display: grid; place-items: center; padding: 24px; }
+.porta-caixa { width: min(380px, 100%); border: 1px solid var(--tinta); padding: 40px 32px 32px; }
+.porta-selo { width: 58px; height: 58px; margin: 0 auto 22px; }
+.porta-caixa h1 { font-size: 22px; font-weight: 600; letter-spacing: -.02em; margin: 0 0 6px; text-align: center; }
+.porta-caixa > p { color: var(--cinza); font-size: 14px; margin: 0 0 28px; text-align: center; line-height: 1.6; }
+.porta-caixa form { display: grid; gap: 14px; }
+.erro { color: #b32b20; font-size: 13.5px; margin: 0; min-height: 18px; text-align: center; }
+.porta-pe { margin-top: 24px; text-align: center; font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--cinza-2); }
+.porta-pe a:hover { color: var(--tinta); }
+
+/* ---------- cabeçalho ---------- */
+.painel-topo {
+  position: sticky; top: 0; z-index: 40;
+  display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+  padding: 12px var(--goteira);
+  background: var(--papel); border-bottom: 1px solid var(--tinta);
+}
+.painel-topo .marca { display: flex; align-items: center; gap: 10px; margin-right: auto; }
+.painel-topo .selo-mini { width: 32px; height: 32px; }
+.painel-topo b { display: block; font-size: 14.5px; font-weight: 600; letter-spacing: .04em; line-height: 1.1; }
+.painel-topo .sub { font-size: 9px; letter-spacing: .16em; color: var(--cinza); }
+.acoes { display: flex; gap: 8px; flex-wrap: wrap; }
+
+.modo { font-size: 9.5px; letter-spacing: .14em; text-transform: uppercase; padding: 5px 9px; border: 1px solid var(--regua-2); color: var(--cinza); }
+.modo.nuvem { border-color: var(--tinta); color: var(--tinta); }
+
+/* ---------- aviso ---------- */
+.nota { display: flex; gap: 12px; padding: 16px 0; border-bottom: 1px solid var(--regua); font-size: 14px; line-height: 1.65; color: var(--cinza); }
+.nota svg { flex: none; margin-top: 3px; color: var(--tinta); }
+.nota b { color: var(--tinta); font-weight: 600; }
+
+/* ---------- placar ---------- */
+.placar { display: grid; grid-template-columns: repeat(4, 1fr); border-bottom: 1px solid var(--regua); }
+@media (max-width: 620px) { .placar { grid-template-columns: repeat(2, 1fr); } }
+.placar div { padding: 22px 20px 22px 0; border-right: 1px solid var(--regua); }
+.placar div:last-child { border-right: 0; }
+@media (max-width: 620px) { .placar div:nth-child(2n) { border-right: 0; } }
+.placar b { display: block; font-size: 32px; font-weight: 600; letter-spacing: -.03em; line-height: 1; }
+.placar span { font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: var(--cinza); display: block; margin-top: 9px; }
+
+/* ---------- comandos ---------- */
+.comandos { display: flex; gap: 16px; flex-wrap: wrap; align-items: center; padding-block: 18px; border-bottom: 1px solid var(--regua); }
+.comandos .input { width: auto; min-width: 220px; flex: 1; border: 0; border-bottom: 1px solid var(--regua-2); padding-inline: 0; }
+.comandos .select { width: auto; border: 0; border-bottom: 1px solid var(--regua-2); padding-inline: 0 24px; }
+
+/* ---------- lista ---------- */
+.linhas { display: flex; flex-direction: column; padding-bottom: 70px; }
+.linha { display: grid; grid-template-columns: 96px 1fr auto; gap: 18px; align-items: center; padding: 14px 0; border-bottom: 1px solid var(--regua); }
+.linha.saiu { opacity: .5; }
+.linha-foto { width: 96px; aspect-ratio: 4/3; overflow: hidden; background: var(--papel-3); }
+.linha-foto img { width: 100%; height: 100%; object-fit: cover; }
+.linha-foto .vazio { width: 100%; height: 100%; display: grid; place-items: center; font-size: 9px; color: var(--cinza-2); text-align: center; }
+.linha-info h3 { margin: 0; font-size: 16.5px; font-weight: 600; letter-spacing: -.015em; }
+.linha-info h3 em { font-style: normal; font-weight: 400; color: var(--cinza); }
+.linha-info p { margin: 4px 0 0; font-size: 11px; color: var(--cinza); }
+.pips { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+.pip { font-size: 9px; letter-spacing: .12em; text-transform: uppercase; padding: 3px 7px; border: 1px solid var(--regua-2); color: var(--cinza); }
+.pip.disponivel { border-color: var(--tinta); color: var(--tinta); }
+.pip.vendido { background: var(--tinta); color: var(--papel); border-color: var(--tinta); }
+.pip.reservado { border-color: var(--tinta); color: var(--tinta); }
+.linha-acoes { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; align-items: center; }
+@media (max-width: 760px) {
+  .linha { grid-template-columns: 76px 1fr; }
+  .linha-foto { width: 76px; }
+  .linha-acoes { grid-column: 1 / -1; justify-content: flex-start; }
+}
+
+.ico { width: 32px; height: 32px; border: 1px solid var(--regua-2); display: grid; place-items: center; color: var(--cinza); transition: .18s; }
+.ico:hover:not(:disabled) { border-color: var(--tinta); color: var(--tinta); }
+.ico:disabled { opacity: .3; cursor: default; }
+.ico.perigo:hover { background: #b32b20; border-color: #b32b20; color: #fff; }
+
+.vazio-lista { padding: 60px 0; text-align: center; color: var(--cinza); border-bottom: 1px solid var(--regua); }
+
+/* ---------- gaveta ---------- */
+.gaveta { position: fixed; inset: 0; z-index: 80; display: flex; justify-content: flex-end; }
+.gaveta-fundo { position: absolute; inset: 0; background: rgba(11,11,11,.4); }
+.gaveta-painel { position: relative; width: min(680px, 100%); height: 100svh; overflow-y: auto; overscroll-behavior: contain; background: var(--papel); border-left: 1px solid var(--tinta); }
+.gaveta-topo { position: sticky; top: 0; z-index: 3; display: flex; align-items: center; gap: 14px; padding: 16px var(--goteira); background: var(--papel); border-bottom: 1px solid var(--tinta); }
+.gaveta-topo h2 { margin: 0 auto 0 0; font-size: 18px; font-weight: 600; letter-spacing: -.015em; }
+.gaveta-corpo { padding: 26px var(--goteira) 120px; }
+.gaveta-pe { position: sticky; bottom: 0; display: flex; gap: 9px; padding: 14px var(--goteira); background: var(--papel); border-top: 1px solid var(--tinta); margin-top: -100px; }
+.gaveta-pe .btn { flex: 1; }
+
+fieldset { border: 0; padding: 0; margin: 0 0 32px; }
+legend { font-size: 10px; letter-spacing: .18em; text-transform: uppercase; color: var(--cinza); padding: 0 0 14px; }
+.duas { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.tres { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+@media (max-width: 560px) { .duas, .tres { grid-template-columns: 1fr; } }
+.marcar { display: flex; align-items: center; gap: 10px; font-size: 14px; color: var(--cinza); cursor: pointer; padding: 10px 0; }
+.marcar input { appearance: none; width: 17px; height: 17px; border: 1px solid var(--regua-2); flex: none; display: grid; place-items: center; cursor: pointer; transition: .15s; }
+.marcar input:checked { background: var(--tinta); border-color: var(--tinta); }
+.marcar input:checked::after { content: ''; width: 4px; height: 8px; border: solid var(--papel); border-width: 0 1.5px 1.5px 0; rotate: 45deg; margin-top: -2px; }
+
+/* ---------- fotos ---------- */
+.solta { border: 1px dashed var(--regua-2); padding: 28px 20px; text-align: center; color: var(--cinza); cursor: pointer; transition: .2s; }
+.solta:hover, .solta.ativa { border-color: var(--tinta); border-style: solid; color: var(--tinta); }
+.solta b { display: block; font-size: 14.5px; color: var(--tinta); font-weight: 500; margin-bottom: 5px; }
+.solta small { font-size: 12.5px; line-height: 1.55; display: block; }
+
+.fotos { display: grid; grid-template-columns: repeat(auto-fill, minmax(128px, 1fr)); gap: 10px; margin-top: 14px; }
+.foto { position: relative; aspect-ratio: 4/3; overflow: hidden; border: 1px solid var(--regua); }
+.foto img { width: 100%; height: 100%; object-fit: cover; }
+.foto-capa { position: absolute; top: 0; left: 0; font-size: 8.5px; letter-spacing: .12em; text-transform: uppercase; background: var(--tinta); color: var(--papel); padding: 3px 7px; }
+.foto-btns { position: absolute; inset: auto 0 0 0; display: flex; gap: 1px; background: var(--tinta); }
+.foto-btns button { flex: 1; height: 24px; background: var(--papel); font-size: 12px; transition: .15s; }
+.foto-btns button:hover:not(:disabled) { background: var(--tinta); color: var(--papel); }
+.foto-btns button:disabled { color: var(--cinza-2); cursor: default; }
+.foto-btns .x:hover { background: #b32b20; color: #fff; }
+
+/* ---------- enquadramento ---------- */
+.enquadra { display: grid; grid-template-columns: 200px 1fr; gap: 18px; align-items: center; margin-top: 18px; padding-top: 18px; border-top: 1px solid var(--regua); }
+@media (max-width: 560px) { .enquadra { grid-template-columns: 1fr; } }
+.enquadra-previa { aspect-ratio: 4/3; overflow: hidden; background: var(--papel-3); border: 1px solid var(--regua); }
+.enquadra-previa img { width: 100%; height: 100%; object-fit: cover; }
+.enquadra p { margin: 0 0 10px; font-size: 13.5px; color: var(--cinza); line-height: 1.6; }
+input[type=range] { width: 100%; appearance: none; height: 1px; background: var(--regua-2); margin: 14px 0; }
+input[type=range]::-webkit-slider-thumb { appearance: none; width: 16px; height: 16px; background: var(--tinta); cursor: pointer; }
+input[type=range]::-moz-range-thumb { width: 16px; height: 16px; background: var(--tinta); border: 0; cursor: pointer; }
+
+/* ---------- opcionais ---------- */
+.tags { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 12px; }
+.tags span { display: inline-flex; align-items: center; gap: 7px; border: 1px solid var(--regua-2); padding: 6px 10px; font-size: 13px; }
+.tags button { color: var(--cinza-2); font-size: 15px; line-height: 1; transition: color .15s; }
+.tags button:hover { color: #b32b20; }
+.sugestoes { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+.sugestoes button { font-size: 10px; letter-spacing: .06em; padding: 5px 9px; border: 1px dashed var(--regua-2); color: var(--cinza-2); transition: .15s; }
+.sugestoes button:hover { border-style: solid; border-color: var(--tinta); color: var(--tinta); }
+
+/* ---------- recado ---------- */
+.recado { position: fixed; left: 50%; bottom: 26px; translate: -50% 0; z-index: 120; background: var(--tinta); color: var(--papel); padding: 14px 24px; font-size: 14px; animation: sobe .25s var(--ease); }
+.recado.ruim { background: #b32b20; }
+@keyframes sobe { from { transform: translate(-50%, 12px); opacity: 0 } }
+</style>
+</head>
+
+<body>
+
+<!-- ============ ENTRADA ============ -->
+<div class="porta" id="porta">
+  <div class="porta-caixa">
+    <span class="porta-selo mark mark-claro"><img src="assets/marca.png" alt="TR Motors" width="58" height="58"></span>
+    <h1>Painel da loja</h1>
+    <p>Aqui você publica os carros que entram no pátio e marca os que já saíram.</p>
+    <form id="formEntrar">
+      <div class="campo" id="campoUsuario" hidden>
+        <label for="usuario">E-mail</label>
+        <input class="input" type="email" id="usuario" autocomplete="username">
+      </div>
+      <div class="campo">
+        <label for="senha">Senha</label>
+        <input class="input" type="password" id="senha" autocomplete="current-password" required autofocus>
+      </div>
+      <button class="btn btn-bloco" type="submit">Entrar</button>
+      <p class="erro" id="erroEntrar"></p>
+    </form>
+    <p class="porta-pe"><a href="index.html">Voltar para o site</a></p>
+  </div>
+</div>
+
+<!-- ============ PAINEL ============ -->
+<div id="painel" hidden>
+  <header class="painel-topo">
+    <div class="marca">
+      <span class="selo-mini mark mark-claro"><img src="assets/marca.png" alt="" width="32" height="32"></span>
+      <div><b>TR MOTORS</b><span class="sub">PAINEL DO ESTOQUE</span></div>
+    </div>
+    <span class="modo" id="modo"></span>
+    <div class="acoes">
+      <button class="btn btn-vazado btn-p" id="btnExportar">Backup</button>
+      <button class="btn btn-vazado btn-p" id="btnImportar">Restaurar</button>
+      <a class="btn btn-vazado btn-p" href="index.html" target="_blank" rel="noopener">Ver o site</a>
+      <button class="btn btn-p" id="btnNovo">Novo carro</button>
+      <button class="btn btn-vazado btn-p" id="btnSair">Sair</button>
+    </div>
+  </header>
+
+  <div class="wrap">
+    <div class="nota" id="notaModo"></div>
+
+    <div class="placar">
+      <div><b id="nDisp">0</b><span>No pátio</span></div>
+      <div><b id="nRes">0</b><span>Reservados</span></div>
+      <div><b id="nVend">0</b><span>Vendidos</span></div>
+      <div><b id="nFoto">0</b><span>Sem foto</span></div>
+    </div>
+
+    <div class="comandos">
+      <input class="input" type="search" id="filtroTxt" placeholder="Buscar carro no estoque">
+      <select class="select" id="filtroStatus">
+        <option value="">Todos os status</option>
+        <option value="disponivel">No pátio</option>
+        <option value="reservado">Reservados</option>
+        <option value="vendido">Vendidos</option>
+      </select>
+    </div>
+
+    <div class="linhas" id="linhas"></div>
+  </div>
+</div>
+
+<!-- ============ GAVETA ============ -->
+<div class="gaveta" id="gaveta" hidden role="dialog" aria-modal="true" aria-label="Cadastro de carro">
+  <div class="gaveta-fundo" data-cancelar></div>
+  <form class="gaveta-painel" id="formCarro">
+    <div class="gaveta-topo">
+      <h2 id="gavetaTitulo">Novo carro</h2>
+      <button class="ico" type="button" data-cancelar aria-label="Fechar">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>
+      </button>
+    </div>
+
+    <div class="gaveta-corpo">
+      <fieldset>
+        <legend>Fotos</legend>
+        <div class="solta" id="solta" tabindex="0" role="button">
+          <b>Toque para escolher ou arraste as fotos aqui</b>
+          <small>A primeira é a capa. As imagens são reduzidas sozinhas para o site abrir rápido no celular.</small>
+        </div>
+        <input type="file" id="arquivos" accept="image/*" multiple hidden>
+        <div class="fotos" id="fotos"></div>
+
+        <div class="enquadra" id="enquadra" hidden>
+          <div class="enquadra-previa"><img id="previaFoto" alt="Prévia do enquadramento"></div>
+          <div>
+            <p><b>Enquadramento.</b> O site mostra a foto em 4 por 3. Arraste para
+               escolher que parte aparece: serve para tirar da frente a tarja de preço
+               que fica no topo das artes do Instagram.</p>
+            <input type="range" id="foco" min="0" max="100" step="1" value="55" aria-label="Enquadramento vertical">
+            <p class="mono" style="font-size:11px;margin:0"><span id="focoVal">55</span>% a partir do topo</p>
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Identificação</legend>
+        <div class="duas">
+          <div class="campo">
+            <label for="fMarca">Marca *</label>
+            <input class="input" id="fMarca" list="marcas" required placeholder="Chevrolet">
+            <datalist id="marcas"></datalist>
+          </div>
+          <div class="campo">
+            <label for="fModelo">Modelo *</label>
+            <input class="input" id="fModelo" required placeholder="Onix">
+          </div>
+        </div>
+        <div class="campo" style="margin-top:14px">
+          <label for="fVersao">Versão</label>
+          <input class="input" id="fVersao" placeholder="LT 1.0 Turbo">
+        </div>
+        <div class="tres" style="margin-top:14px">
+          <div class="campo">
+            <label for="fLote">Nº do lote</label>
+            <input class="input" id="fLote" type="number" min="1" inputmode="numeric">
+          </div>
+          <div class="campo">
+            <label for="fAnoFab">Ano de fabricação</label>
+            <input class="input" id="fAnoFab" type="number" min="1900" max="2100" inputmode="numeric">
+          </div>
+          <div class="campo">
+            <label for="fAnoMod">Ano do modelo</label>
+            <input class="input" id="fAnoMod" type="number" min="1900" max="2100" inputmode="numeric">
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Ficha técnica</legend>
+        <p style="font-size:13px;color:var(--cinza);margin:-6px 0 16px;line-height:1.6">
+          Deixe em branco o que você não quer afirmar. Campo vazio simplesmente não aparece no site.
+        </p>
+        <div class="tres">
+          <div class="campo">
+            <label for="fKm">Quilometragem</label>
+            <input class="input" id="fKm" type="number" min="0" inputmode="numeric">
+          </div>
+          <div class="campo">
+            <label for="fCambio">Câmbio</label>
+            <select class="select" id="fCambio"></select>
+          </div>
+          <div class="campo">
+            <label for="fComb">Combustível</label>
+            <select class="select" id="fComb"></select>
+          </div>
+        </div>
+        <div class="tres" style="margin-top:14px">
+          <div class="campo">
+            <label for="fCarroceria">Carroceria</label>
+            <select class="select" id="fCarroceria"></select>
+          </div>
+          <div class="campo">
+            <label for="fCor">Cor</label>
+            <input class="input" id="fCor">
+          </div>
+          <div class="campo">
+            <label for="fPortas">Portas</label>
+            <input class="input" id="fPortas" type="number" min="2" max="5" inputmode="numeric">
+          </div>
+        </div>
+        <div class="duas" style="margin-top:14px">
+          <div class="campo">
+            <label for="fStatus">Situação</label>
+            <select class="select" id="fStatus">
+              <option value="disponivel">No pátio (aparece no site)</option>
+              <option value="reservado">Reservado</option>
+              <option value="vendido">Vendido</option>
+            </select>
+          </div>
+          <div class="campo">
+            <label for="fFaixa">Faixa de valor</label>
+            <select class="select" id="fFaixa"></select>
+          </div>
+        </div>
+        <p style="font-size:13px;color:var(--cinza);margin:12px 0 0;line-height:1.6">
+          A faixa só alimenta o filtro do site. O valor em si nunca aparece, nem na
+          página nem no código, e o cliente continua tendo que chamar no WhatsApp.
+        </p>
+        <label class="marcar" style="margin-top:6px"><input type="checkbox" id="fDestaque"> Marcar como destaque</label>
+      </fieldset>
+
+      <fieldset>
+        <legend>Itens e opcionais</legend>
+        <div class="campo">
+          <label for="fOpcional">Digite e aperte Enter para adicionar</label>
+          <input class="input" id="fOpcional" placeholder="Central multimídia">
+        </div>
+        <div class="tags" id="tagsOpcionais"></div>
+        <div class="sugestoes" id="sugestoes"></div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Observações</legend>
+        <div class="campo">
+          <label for="fObs">Aparece na ficha do carro, no site</label>
+          <textarea class="textarea" id="fObs" placeholder="Revisões na concessionária, pneus novos, manual e chave reserva..."></textarea>
+        </div>
+      </fieldset>
+    </div>
+
+    <div class="gaveta-pe">
+      <button class="btn btn-vazado" type="button" data-cancelar>Cancelar</button>
+      <button class="btn" type="submit" id="btnSalvar">Publicar no site</button>
+    </div>
+  </form>
+</div>
+
+<input type="file" id="arquivoJson" accept="application/json" hidden>
+
+<script src="assets/store.js"></script>
+<script>
+/* ============================================================
+   TR MOTORS · painel
+   ============================================================ */
+const $  = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+
+let CARROS = [];
+let editando = null;
+let fotosAtuais = [];
+let opcionais = [];
+
+const SUGESTOES = [
+  'Ar-condicionado', 'Direção hidráulica', 'Direção elétrica', 'Vidros elétricos',
+  'Travas elétricas', 'Central multimídia', 'Câmera de ré', 'Sensor de estacionamento',
+  'Bancos em couro', 'Rodas de liga leve', 'Faróis de neblina', 'Computador de bordo',
+  'Airbags', 'Freios ABS', 'Piloto automático', 'Veículo completo',
+];
+
+let recadoTimer;
+function recado(texto, ruim) {
+  $('.recado')?.remove();
+  const d = document.createElement('div');
+  d.className = 'recado' + (ruim ? ' ruim' : '');
+  d.textContent = texto;
+  document.body.appendChild(d);
+  clearTimeout(recadoTimer);
+  recadoTimer = setTimeout(() => d.remove(), 3200);
+}
+
+const avisarSite = () => localStorage.setItem('tr.atualizado', String(Date.now()));
+
+/* ============================================================
+   Entrada
+   ============================================================ */
+const naNuvem = Estoque.modo === 'nuvem';
+if (naNuvem) $('#campoUsuario').hidden = false;
+
+$('#formEntrar').addEventListener('submit', async e => {
+  e.preventDefault();
+  const r = await Estoque.Sessao.entrar($('#usuario').value.trim(), $('#senha').value);
+  if (!r.ok) { $('#erroEntrar').textContent = r.erro; return; }
+  abrirPainel();
+});
+
+async function abrirPainel() {
+  $('#porta').hidden = true;
+  $('#painel').hidden = false;
+
+  $('#modo').textContent = naNuvem ? 'Nuvem' : 'Local';
+  $('#modo').classList.toggle('nuvem', naNuvem);
+  $('#notaModo').innerHTML = `
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01" stroke-linecap="round"/></svg>
+    <div>${naNuvem
+      ? 'Painel ligado na <b>nuvem</b>. Tudo que você publicar aqui aparece no site para qualquer visitante, de qualquer aparelho.'
+      : 'Painel em <b>modo local</b>: o estoque fica salvo neste aparelho e neste navegador, ótimo para testar à vontade. Para publicar de verdade e editar pelo celular, é só ligar a nuvem (passo a passo no <b>README.md</b>). Use o <b>Backup</b> antes de trocar de aparelho.'
+    }</div>`;
+
+  await Estoque.init();
+  await recarregar();
+}
+
+$('#btnSair').addEventListener('click', async () => {
+  await Estoque.Sessao.sair();
+  location.reload();
+});
+
+/* ============================================================
+   Lista
+   ============================================================ */
+async function recarregar() {
+  CARROS = await Estoque.list();
+  $('#nDisp').textContent = CARROS.filter(c => c.status === 'disponivel').length;
+  $('#nRes').textContent  = CARROS.filter(c => c.status === 'reservado').length;
+  $('#nVend').textContent = CARROS.filter(c => c.status === 'vendido').length;
+  $('#nFoto').textContent = CARROS.filter(c => !(c.fotos || []).length).length;
+  pintarLinhas();
+}
+
+function pintarLinhas() {
+  const termo = $('#filtroTxt').value.trim().toLowerCase();
+  const st = $('#filtroStatus').value;
+
+  const lista = CARROS
+    .filter(c => !st || c.status === st)
+    .filter(c => !termo || nomeCompleto(c).toLowerCase().includes(termo));
+
+  if (!lista.length) {
+    $('#linhas').innerHTML = `<p class="vazio-lista">${CARROS.length
+      ? 'Nenhum carro encontrado com esse filtro.'
+      : 'O estoque está vazio. Clique em <b>Novo carro</b> para começar.'}</p>`;
+    return;
+  }
+
+  $('#linhas').innerHTML = lista.map((c, i) => {
+    const f = (c.fotos || [])[0];
+    const capa = f
+      ? `<img src="${esc(f)}" alt="" loading="lazy" style="object-position:center ${c.foco ?? FOCO_PADRAO}%">`
+      : '<div class="vazio">sem<br>foto</div>';
+    return `
+    <article class="linha ${c.status === 'vendido' ? 'saiu' : ''}" data-id="${esc(c.id)}">
+      <div class="linha-foto">${capa}</div>
+      <div class="linha-info">
+        <h3>${esc(nomeCarro(c))} <em>${esc(c.versao || '')}</em></h3>
+        <p>Lote ${lote(c.lote)}${specs(c).length ? ' · ' + esc(specs(c).join(' · ')) : ''}</p>
+        <div class="pips">
+          <span class="pip ${c.status}">${STATUS[c.status] || c.status}</span>
+          ${c.destaque ? '<span class="pip">Destaque</span>' : ''}
+          <span class="pip">${(c.fotos || []).length} foto${(c.fotos || []).length === 1 ? '' : 's'}</span>
+        </div>
+      </div>
+      <div class="linha-acoes">
+        <button class="ico" data-acao="subir" ${i === 0 ? 'disabled' : ''} title="Subir na vitrine" aria-label="Subir">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button>
+        <button class="ico" data-acao="descer" ${i === lista.length - 1 ? 'disabled' : ''} title="Descer na vitrine" aria-label="Descer">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M19 12l-7 7-7-7"/></svg></button>
+        <button class="btn btn-vazado btn-p" data-acao="status">${c.status === 'vendido' ? 'Voltar ao pátio' : 'Marcar vendido'}</button>
+        <button class="btn btn-vazado btn-p" data-acao="editar">Editar</button>
+        <button class="ico perigo" data-acao="excluir" title="Excluir" aria-label="Excluir">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg></button>
+      </div>
+    </article>`;
+  }).join('');
+}
+
+$('#filtroTxt').addEventListener('input', pintarLinhas);
+$('#filtroStatus').addEventListener('change', pintarLinhas);
+
+$('#linhas').addEventListener('click', async e => {
+  const b = e.target.closest('[data-acao]');
+  if (!b || b.disabled) return;
+  const id = b.closest('.linha').dataset.id;
+  const c = CARROS.find(x => x.id === id);
+  if (!c) return;
+
+  switch (b.dataset.acao) {
+    case 'editar': return abrirGaveta(c);
+
+    case 'status': {
+      c.status = c.status === 'vendido' ? 'disponivel' : 'vendido';
+      await Estoque.save(c);
+      avisarSite();
+      recado(c.status === 'vendido' ? 'Carro marcado como vendido.' : 'Carro de volta ao pátio.');
+      return recarregar();
+    }
+
+    case 'excluir': {
+      if (!confirm(`Excluir ${nomeCarro(c)} do estoque?\n\nIsso apaga o carro e as fotos dele. Não dá para desfazer.`)) return;
+      await Estoque.remove(id);
+      avisarSite();
+      recado('Carro removido do estoque.');
+      return recarregar();
+    }
+
+    case 'subir':
+    case 'descer': {
+      const ord = [...CARROS].sort((a, z) => (a.ordem ?? 0) - (z.ordem ?? 0));
+      const i = ord.findIndex(x => x.id === id);
+      const j = b.dataset.acao === 'subir' ? i - 1 : i + 1;
+      if (j < 0 || j >= ord.length) return;
+      [ord[i], ord[j]] = [ord[j], ord[i]];
+      await Promise.all(ord.map((x, k) => (x.ordem === k ? null : Estoque.save({ ...x, ordem: k }))));
+      avisarSite();
+      return recarregar();
+    }
+  }
+});
+
+/* ============================================================
+   Gaveta
+   ============================================================ */
+CAMBIOS.forEach(v => $('#fCambio').add(new Option(v || 'Não informar', v)));
+COMBUSTIVEIS.forEach(v => $('#fComb').add(new Option(v || 'Não informar', v)));
+CARROCERIAS.forEach(v => $('#fCarroceria').add(new Option(v, v)));
+$('#fFaixa').add(new Option('Não informar', ''));
+FAIXAS.forEach(f => $('#fFaixa').add(new Option(f.rot, f.n)));
+$('#marcas').innerHTML = ['Chevrolet', 'Volkswagen', 'Fiat', 'Hyundai', 'Toyota', 'Jeep', 'Ford', 'Renault', 'Honda', 'Nissan', 'Peugeot', 'Citroën', 'Kia', 'Mitsubishi', 'Chery', 'BMW', 'Mercedes-Benz', 'Audi']
+  .map(m => `<option value="${m}">`).join('');
+$('#sugestoes').innerHTML = SUGESTOES.map(s => `<button type="button" data-sug="${esc(s)}">${esc(s)}</button>`).join('');
+
+function abrirGaveta(c) {
+  editando = c || null;
+  const proximoLote = CARROS.reduce((m, x) => Math.max(m, Number(x.lote) || 0), 0) + 1;
+
+  $('#gavetaTitulo').textContent = c ? 'Editar carro' : 'Novo carro';
+  $('#btnSalvar').textContent = c ? 'Salvar alterações' : 'Publicar no site';
+
+  $('#fMarca').value      = c?.marca || '';
+  $('#fModelo').value     = c?.modelo || '';
+  $('#fVersao').value     = c?.versao || '';
+  $('#fLote').value       = c?.lote ?? proximoLote;
+  $('#fAnoFab').value     = c?.anoFab || '';
+  $('#fAnoMod').value     = c?.anoMod || '';
+  $('#fKm').value         = c?.km || '';
+  $('#fCambio').value     = c?.cambio || '';
+  $('#fComb').value       = c?.combustivel || 'Flex';
+  $('#fCarroceria').value = c?.carroceria || 'Hatch';
+  $('#fCor').value        = c?.cor || '';
+  $('#fPortas').value     = c?.portas || '';
+  $('#fStatus').value     = c?.status || 'disponivel';
+  $('#fFaixa').value      = c?.faixa || '';
+  $('#fDestaque').checked = !!c?.destaque;
+  $('#fObs').value        = c?.obs || '';
+  $('#foco').value        = c?.foco ?? FOCO_PADRAO;
+
+  opcionais = [...(c?.opcionais || [])];
+  fotosAtuais = [...(c?.fotos || [])];
+  pintarTags();
+  pintarFotos();
+
+  $('#gaveta').hidden = false;
+  document.body.style.overflow = 'hidden';
+  $('.gaveta-painel').scrollTop = 0;
+  setTimeout(() => $('#fMarca').focus(), 50);
+}
+
+function fecharGaveta() {
+  $('#gaveta').hidden = true;
+  document.body.style.overflow = '';
+  editando = null;
+}
+
+$('#btnNovo').addEventListener('click', () => abrirGaveta(null));
+$('#gaveta').addEventListener('click', e => { if (e.target.closest('[data-cancelar]')) fecharGaveta(); });
+addEventListener('keydown', e => { if (e.key === 'Escape' && !$('#gaveta').hidden) fecharGaveta(); });
+
+/* ---------- opcionais ---------- */
+function pintarTags() {
+  $('#tagsOpcionais').innerHTML = opcionais.map((o, i) =>
+    `<span>${esc(o)}<button type="button" data-tira="${i}" aria-label="Remover ${esc(o)}">×</button></span>`).join('');
+}
+$('#fOpcional').addEventListener('keydown', e => {
+  if (e.key !== 'Enter') return;
+  e.preventDefault();
+  const v = e.target.value.trim();
+  if (v && !opcionais.includes(v)) opcionais.push(v);
+  e.target.value = '';
+  pintarTags();
+});
+$('#tagsOpcionais').addEventListener('click', e => {
+  const b = e.target.closest('[data-tira]');
+  if (!b) return;
+  opcionais.splice(Number(b.dataset.tira), 1);
+  pintarTags();
+});
+$('#sugestoes').addEventListener('click', e => {
+  const b = e.target.closest('[data-sug]');
+  if (!b) return;
+  if (!opcionais.includes(b.dataset.sug)) { opcionais.push(b.dataset.sug); pintarTags(); }
+});
+
+/* ---------- fotos ---------- */
+function pintarFotos() {
+  $('#fotos').innerHTML = fotosAtuais.map((f, i) => `
+    <div class="foto">
+      ${i === 0 ? '<span class="foto-capa">Capa</span>' : ''}
+      <img src="${esc(f)}" alt="Foto ${i + 1}" style="object-position:center ${$('#foco').value}%">
+      <div class="foto-btns">
+        <button type="button" data-foto="esq" data-i="${i}" ${i === 0 ? 'disabled' : ''} aria-label="Mover para a esquerda">←</button>
+        <button type="button" data-foto="dir" data-i="${i}" ${i === fotosAtuais.length - 1 ? 'disabled' : ''} aria-label="Mover para a direita">→</button>
+        <button type="button" class="x" data-foto="x" data-i="${i}" aria-label="Remover foto">×</button>
+      </div>
+    </div>`).join('');
+
+  $('#enquadra').hidden = !fotosAtuais.length;
+  if (fotosAtuais.length) pintarPrevia();
+}
+
+function pintarPrevia() {
+  $('#previaFoto').src = fotosAtuais[0];
+  $('#previaFoto').style.objectPosition = `center ${$('#foco').value}%`;
+  $('#focoVal').textContent = $('#foco').value;
+}
+
+$('#foco').addEventListener('input', () => {
+  pintarPrevia();
+  $$('#fotos img').forEach(i => i.style.objectPosition = `center ${$('#foco').value}%`);
+});
+
+$('#fotos').addEventListener('click', e => {
+  const b = e.target.closest('[data-foto]');
+  if (!b || b.disabled) return;
+  const i = Number(b.dataset.i);
+  if (b.dataset.foto === 'x') fotosAtuais.splice(i, 1);
+  else {
+    const j = b.dataset.foto === 'esq' ? i - 1 : i + 1;
+    if (j < 0 || j >= fotosAtuais.length) return;
+    [fotosAtuais[i], fotosAtuais[j]] = [fotosAtuais[j], fotosAtuais[i]];
+  }
+  pintarFotos();
+});
+
+$('#solta').addEventListener('click', () => $('#arquivos').click());
+$('#solta').addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); $('#arquivos').click(); } });
+$('#arquivos').addEventListener('change', e => { receberFotos([...e.target.files]); e.target.value = ''; });
+
+['dragenter', 'dragover'].forEach(ev =>
+  $('#solta').addEventListener(ev, e => { e.preventDefault(); $('#solta').classList.add('ativa'); }));
+['dragleave', 'drop'].forEach(ev =>
+  $('#solta').addEventListener(ev, e => { e.preventDefault(); $('#solta').classList.remove('ativa'); }));
+$('#solta').addEventListener('drop', e => receberFotos([...e.dataTransfer.files]));
+
+async function receberFotos(arquivos) {
+  const imagens = arquivos.filter(f => f.type.startsWith('image/'));
+  if (!imagens.length) return;
+
+  const antes = $('#solta').innerHTML;
+  $('#solta').innerHTML = `<b>Preparando ${imagens.length} foto${imagens.length > 1 ? 's' : ''}...</b>`;
+
+  for (const arq of imagens) {
+    try {
+      const menor = await comprimirImagem(arq);
+      fotosAtuais.push(await Estoque.subirFoto(menor, arq.name));
+      pintarFotos();
+    } catch (err) {
+      console.error(err);
+      recado(`Não consegui usar a foto "${arq.name}".`, true);
+    }
+  }
+  $('#solta').innerHTML = antes;
+}
+
+/* ---------- salvar ---------- */
+$('#formCarro').addEventListener('submit', async e => {
+  e.preventDefault();
+  $('#btnSalvar').disabled = true;
+
+  const proximaOrdem = CARROS.reduce((m, x) => Math.max(m, x.ordem ?? 0), -1) + 1;
+  const carro = {
+    ...(editando || {}),
+    marca:       $('#fMarca').value.trim(),
+    modelo:      $('#fModelo').value.trim(),
+    versao:      $('#fVersao').value.trim(),
+    lote:        Number($('#fLote').value) || 0,
+    anoFab:      Number($('#fAnoFab').value) || null,
+    anoMod:      Number($('#fAnoMod').value) || Number($('#fAnoFab').value) || null,
+    km:          Number($('#fKm').value) || null,
+    cambio:      $('#fCambio').value,
+    combustivel: $('#fComb').value,
+    carroceria:  $('#fCarroceria').value,
+    cor:         $('#fCor').value.trim(),
+    portas:      Number($('#fPortas').value) || null,
+    status:      $('#fStatus').value,
+    faixa:       Number($('#fFaixa').value) || null,
+    destaque:    $('#fDestaque').checked,
+    obs:         $('#fObs').value.trim(),
+    opcionais:   [...opcionais],
+    fotos:       [...fotosAtuais],
+    foco:        Number($('#foco').value),
+    ordem:       editando ? editando.ordem : proximaOrdem,
+  };
+
+  try {
+    await Estoque.save(carro);
+    avisarSite();
+    recado(editando ? 'Alterações salvas.' : `${nomeCarro(carro)} publicado no site.`);
+    fecharGaveta();
+    await recarregar();
+  } catch (err) {
+    console.error(err);
+    recado('Não consegui salvar. Confira a conexão e tente de novo.', true);
+  } finally {
+    $('#btnSalvar').disabled = false;
+  }
+});
+
+/* ============================================================
+   Backup
+   ============================================================ */
+$('#btnExportar').addEventListener('click', async () => {
+  const dados = { loja: 'TR Motors', geradoEm: new Date().toISOString(), carros: await Estoque.list() };
+  const url = URL.createObjectURL(new Blob([JSON.stringify(dados, null, 2)], { type: 'application/json' }));
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `estoque-trmotors-${new Date().toISOString().slice(0, 10)}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  recado('Backup baixado.');
+});
+
+$('#btnImportar').addEventListener('click', () => $('#arquivoJson').click());
+$('#arquivoJson').addEventListener('change', async e => {
+  const arq = e.target.files[0];
+  e.target.value = '';
+  if (!arq) return;
+  try {
+    const dados = JSON.parse(await arq.text());
+    const lista = Array.isArray(dados) ? dados : dados.carros;
+    if (!Array.isArray(lista)) throw new Error('formato');
+    if (!confirm(`Restaurar ${lista.length} carros?\n\nIsso substitui todo o estoque que está aqui hoje.`)) return;
+    await Estoque.replaceAll(lista.map((c, i) => ({ ...c, id: c.id || uid(), ordem: c.ordem ?? i })));
+    avisarSite();
+    recado(`${lista.length} carros restaurados.`);
+    recarregar();
+  } catch (err) {
+    console.error(err);
+    recado('Arquivo inválido. Use um backup gerado por este painel.', true);
+  }
+});
+
+/* ---------- partida ---------- */
+(async () => { if (await Estoque.Sessao.ativa()) abrirPainel(); })();
+</script>
+</body>
+</html>
