@@ -20,7 +20,8 @@ carro.
 | `admin.html` | O painel da loja |
 | `assets/theme.css` | Cores, fontes e componentes |
 | `assets/store.js` | Dados de contato, estoque inicial e camada de gravação |
-| `assets/fotos/` | 28 fotos, uma por carro, já padronizadas |
+| `assets/fotos/` | Fotos dos carros, padronizadas em 4:3 |
+| `assets/marcas/` | Logos monocromáticos das montadoras |
 | `assets/marca.png` | Logo da loja |
 | `supabase.sql` | Banco da nuvem, para sincronizar entre aparelhos |
 
@@ -30,7 +31,7 @@ Não tem build, não tem npm, não tem servidor. São arquivos estáticos.
 
 ## De onde vieram os carros
 
-Os 28 carros que já estão no site foram montados a partir dos **anúncios
+Os carros que já estão no site foram montados a partir dos **anúncios
 publicados no @trmotors__**: modelo, versão, ano, quilometragem, opcionais e
 observações saíram da legenda de cada post. A foto de cada carro é a **capa do
 próprio anúncio**.
@@ -42,7 +43,13 @@ Duas coisas importantes:
    dado. Nada foi preenchido por chute. Quando a loja souber, é só completar
    pelo painel.
 
-2. **A loja precisa revisar o que já foi vendido.** Os anúncios são de datas
+2. **Só entrou carro com foto no padrão.** O critério é a primeira foto do
+   Jetta: três quartos dianteiro, carro nivelado, corpo inteiro no quadro, sem
+   texto e sem pessoas. Quem não passava saiu do ar, e volta assim que a loja
+   mandar uma foto nesse enquadramento. Prioridade para Renegade, Corolla,
+   Amarok e Fusion, que são os carros mais fortes do estoque.
+
+3. **A loja precisa revisar o que já foi vendido.** Os anúncios são de datas
    diferentes, então parte desse estoque provavelmente já saiu. Tudo entrou
    como "no pátio"; basta abrir o painel e clicar em *Marcar vendido* no que
    não estiver mais disponível. Leva uns dois minutos.

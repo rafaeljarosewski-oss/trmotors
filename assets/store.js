@@ -55,7 +55,7 @@ const TR = {
    ------------------------------------------------------------ */
 // Suba este número toda vez que mexer na lista abaixo. É o que faz o
 // catálogo novo chegar em quem já abriu o site alguma vez.
-const SEED_VERSAO = 5;
+const SEED_VERSAO = 6;
 
 const SEED = [
   { id: 'DZ-TEoWOlwx', faixa: 4, marca: 'Volkswagen', modelo: 'Jetta', versao: 'Highline 2.0 TSI',
@@ -71,31 +71,6 @@ const SEED = [
     opcionais: ['Motor 1.4 TSI turbo', 'Câmbio automático DSG', 'Bancos em couro', 'Central multimídia', 'Rodas de liga leve'],
     obs: 'Esportivo, elegante e com desempenho de sobra. Excelente estado de conservação.' },
 
-  { id: 'DaYqtlTtmt0', faixa: 4, marca: 'Jeep', modelo: 'Renegade', versao: 'Longitude 1.8 Flex',
-    anoMod: 2016, carroceria: 'SUV', cambio: 'Automático', combustivel: 'Flex', destaque: true,
-    opcionais: ['Câmbio automático', 'Versão Longitude', 'Rodas de liga leve', 'Faróis de neblina'],
-    obs: 'Excelente estado de conservação.' },
-
-  { id: 'DdFDISwtIna', faixa: 5, marca: 'Toyota', modelo: 'Corolla', versao: 'GLi 2.0 Automático',
-    anoMod: 2020, km: 70000, carroceria: 'Sedã', cambio: 'Automático', combustivel: 'Flex',
-    opcionais: ['Todas as revisões em concessionária', 'Câmbio automático', 'Central multimídia', 'Ar-condicionado', 'Direção elétrica', 'Vidros e travas elétricas', 'Rodas de liga leve'],
-    obs: 'Apenas 70.000 km rodados.' },
-
-  { id: 'DdSKoAptRF6', faixa: 5, marca: 'Volkswagen', modelo: 'Amarok', versao: 'V6 Extreme 3.0',
-    anoMod: 2019, carroceria: 'Picape', cambio: 'Automático', combustivel: 'Diesel',
-    opcionais: ['Motor 3.0 V6 turbodiesel', 'Tração 4x4', 'Câmbio automático', 'Versão Extreme'],
-    obs: '' },
-
-  { id: 'DdCQaptNbgF', faixa: 4, marca: 'Ford', modelo: 'Fusion', versao: 'Titanium AWD 2.0 Turbo',
-    anoMod: 2013, carroceria: 'Sedã', cambio: 'Automático', combustivel: 'Gasolina',
-    opcionais: ['Motor 2.0 turbo', 'Tração AWD', 'Câmbio automático', 'Bancos em couro', 'Teto solar', 'Ar-condicionado digital dual zone', 'Central multimídia', 'Câmera de ré'],
-    obs: 'Sedã premium, potente e sofisticado.' },
-
-  { id: 'DdaMJLBsr3E', faixa: 3, marca: 'Chevrolet', modelo: 'Cruze', versao: 'Sedan LT 1.8',
-    anoMod: 2013, carroceria: 'Sedã', cambio: 'Automático', combustivel: 'Flex',
-    opcionais: ['Motor 1.8 Flex', 'Câmbio automático', 'Bancos em couro', 'Ar-condicionado', 'Direção hidráulica', 'Vidros e travas elétricas', 'Rodas de liga leve'],
-    obs: 'Excelente espaço interno e conforto.' },
-
   { id: 'DdCWBbjtnvp', faixa: 3, marca: 'Chevrolet', modelo: 'Onix', versao: '1.0',
     anoMod: 2025, km: 37000, carroceria: 'Hatch', combustivel: 'Flex', opcionais: [], obs: '' },
 
@@ -103,11 +78,6 @@ const SEED = [
     anoMod: 2021, km: 88000, carroceria: 'Hatch', cambio: 'Manual', combustivel: 'Flex',
     opcionais: ['Motor 1.0', 'Câmbio manual', 'Ar-condicionado', 'Direção elétrica', 'Vidros elétricos', 'Travas elétricas', 'Computador de bordo'],
     obs: 'Veículo completo.' },
-
-  { id: 'DdR8nXdtzM_', marca: 'Hyundai', modelo: 'HB20', versao: 'Sense 1.0',
-    anoMod: 2021, carroceria: 'Hatch', cambio: 'Manual', combustivel: 'Flex',
-    opcionais: ['Motor 1.0 Flex', 'Câmbio manual'],
-    obs: 'Econômico e confiável, bom para cidade e estrada.' },
 
   { id: 'DdXXMVUtUC5', faixa: 4, marca: 'Volkswagen', modelo: 'up!', versao: 'take 1.0',
     anoMod: 2020, carroceria: 'Hatch', cambio: 'Manual', combustivel: 'Flex',
@@ -121,11 +91,6 @@ const SEED = [
   { id: 'DdM-yi6Nq3E', faixa: 3, marca: 'Hyundai', modelo: 'HB20S', versao: 'Premium 1.6',
     anoMod: 2015, carroceria: 'Sedã', combustivel: 'Flex', opcionais: [], obs: '' },
 
-  { id: 'Dcv7-bMNOfo', faixa: 3, marca: 'Chevrolet', modelo: 'Prisma', versao: 'LT 1.4',
-    anoMod: 2015, carroceria: 'Sedã', cambio: 'Manual', combustivel: 'Flex',
-    opcionais: ['Motor 1.4 Flex', 'Câmbio manual', 'Ar-condicionado', 'Direção hidráulica', 'Vidros elétricos', 'Travas elétricas', 'Som', 'Rodas de liga leve'],
-    obs: '' },
-
   { id: 'DdCMpe9NJVl', faixa: 3, marca: 'Ford', modelo: 'New Fiesta', versao: '1.5 Flex Manual',
     anoMod: 2015, carroceria: 'Hatch', cambio: 'Manual', combustivel: 'Flex',
     opcionais: ['Ar-condicionado', 'Direção elétrica', 'Vidros e travas elétricas', 'Central multimídia', 'Rodas de liga leve', 'Controle de estabilidade', 'Airbags'],
@@ -136,48 +101,9 @@ const SEED = [
     opcionais: ['Motor 1.4', 'Cabine dupla', 'Câmbio manual', 'Ar-condicionado', 'Direção hidráulica', 'Vidros elétricos', 'Travas elétricas', 'Faróis de neblina'],
     obs: '' },
 
-  { id: 'DdH4o_7trhn', faixa: 2, marca: 'Fiat', modelo: 'Palio', versao: 'Fire 1.0',
-    anoMod: 2016, carroceria: 'Hatch', combustivel: 'Flex', opcionais: [], obs: '' },
-
-  { id: 'DdeHFn0tyN2', faixa: 2, marca: 'Fiat', modelo: 'Palio', versao: 'Economy 1.0',
-    anoMod: 2012, carroceria: 'Hatch', combustivel: 'Flex', opcionais: [], obs: 'Veículo completo.' },
-
-  { id: 'Dc4dVY4RXKF', faixa: 2, marca: 'Chevrolet', modelo: 'Astra', versao: 'Advantage 2.0',
-    anoMod: 2008, carroceria: 'Hatch', combustivel: 'Flex',
-    opcionais: ['Motor 2.0', 'Ar-condicionado', 'Direção hidráulica', 'Vidros elétricos', 'Travas elétricas', 'Rodas de liga leve'],
-    obs: 'Veículo completo.' },
-
-  { id: 'Dc4I94dN_4N', faixa: 2, marca: 'Chevrolet', modelo: 'Prisma', versao: 'Maxx 1.4',
-    anoMod: 2010, km: 169000, carroceria: 'Sedã', cambio: 'Manual', combustivel: 'Flex',
-    opcionais: ['Motor 1.4', 'Câmbio manual', 'Ar-condicionado', 'Direção hidráulica', 'Vidros elétricos', 'Travas elétricas', 'Rodas de liga leve'],
-    obs: 'Veículo completo.' },
-
-  { id: 'DdaFNzYt40A', faixa: 2, marca: 'Chevrolet', modelo: 'Celta', versao: 'LT 1.0',
-    anoMod: 2012, carroceria: 'Hatch', cambio: 'Manual', combustivel: 'Flex', portas: 4,
-    opcionais: ['Motor 1.0', 'Câmbio manual', '4 portas', 'Rodas de liga leve'],
-    obs: 'Econômico, compacto e ótimo para o dia a dia.' },
-
-
-  { id: 'DdZ-U_AtwEw', faixa: 1, marca: 'Chevrolet', modelo: 'Corsa', versao: 'Sedan Life 1.0',
-    anoMod: 2007, carroceria: 'Sedã', cambio: 'Manual', combustivel: 'Flex',
-    opcionais: ['Motor 1.0', 'Câmbio manual'],
-    obs: 'Ótima opção para primeiro carro. Manutenção acessível.' },
-
-  { id: 'DdMdoU9N1Hx', faixa: 1, marca: 'Volkswagen', modelo: 'Gol', versao: 'City 1.0',
-    km: 126000, carroceria: 'Hatch', combustivel: 'Flex', opcionais: [], obs: 'Veículo completo.' },
-
-  { id: 'DdH7uDrtUuv', faixa: 2, marca: 'Volkswagen', modelo: 'SpaceFox', versao: '1.6',
-    carroceria: 'Perua', combustivel: 'Flex', opcionais: [], obs: 'Veículo completo.' },
-
   { id: 'DdR6lXqtc_w', faixa: 3, marca: 'Hyundai', modelo: 'i30', versao: '2.0',
     anoMod: 2010, carroceria: 'Hatch', combustivel: 'Gasolina', opcionais: [], obs: '' },
 
-  { id: 'DdM0D-_NZVz', faixa: 1, marca: 'Fiat', modelo: 'Palio Weekend', versao: '1.6',
-    anoMod: 1997, carroceria: 'Perua', combustivel: 'Gasolina', opcionais: [], obs: '' },
-
-  { id: 'DdCt-OAtJeb', faixa: 1, marca: 'Volkswagen', modelo: 'Brasília', versao: '1500',
-    anoMod: 1976, carroceria: 'Hatch', combustivel: 'Gasolina', opcionais: [],
-    obs: 'Clássico para quem gosta de carro antigo.' },
 ];
 
 /* ============================================================
@@ -455,7 +381,6 @@ const Estoque = (() => {
   return { init, list, save, remove, replaceAll, semear, restaurarSeed, Sessao, subirFoto,
            get modo() { return usaNuvem ? 'nuvem' : 'local'; } };
 })();
-
 
 /* ------------------------------------------------------------
    Reduz a foto antes de guardar. Foto de celular tem 5 MB; aqui
