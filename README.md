@@ -18,6 +18,7 @@ carro.
 |---|---|
 | `index.html` | O site que o cliente vê |
 | `admin.html` | O painel da loja |
+| `quadro.html` | Quadro de entrada: a papelada de cada carro que entra |
 | `assets/theme.css` | Cores, fontes e componentes |
 | `assets/store.js` | Dados de contato, estoque inicial e camada de gravação |
 | `assets/fotos/` | Fotos dos carros, padronizadas em 4:3 |
@@ -160,6 +161,45 @@ Abra `admin.html` (ou clique em *Painel da loja* no rodapé do site).
 - **Setas para cima e para baixo** mudam a ordem da vitrine.
 - **Backup** baixa um `.json` com o estoque inteiro. Faça isso de vez em
   quando, principalmente antes de trocar de aparelho ou de navegador.
+
+---
+
+## Quadro de entrada
+
+Abra `quadro.html` (ou o botão *Quadro de entrada* no painel). A senha é a
+mesma do painel. Serve para acompanhar a papelada de cada carro que entra no
+estoque:
+
+| Sigla | Etapa |
+|---|---|
+| **E** | Entrada |
+| **OS** | OS cortesia |
+| **F** | Faturamento |
+| **R** | Renave |
+| **CVU** | Compra do veículo usado (só quando tem) |
+| **B** | Boleto |
+| **Bônus** | Bônus (só quando tem) |
+
+- **Nova entrada** abre a ficha: carro, placa, chassi, cliente, data de
+  entrada, se tem CVU e bônus, e um campo livre de anotações. O campo *Carro*
+  sugere os carros que já estão no estoque do site.
+- **Um clique na etapa** marca como feita hoje (fica preta, com a data).
+  Clicou errado? Clique de novo ou use o *Desfazer* que aparece embaixo.
+  A etapa com borda grossa é a próxima a fazer.
+- **CVU e Bônus** aparecem tracejados com "não tem" quando o carro não tem.
+  Se tiver, é só clicar neles que entram na conta.
+- **Procurar**: digite parte do nome do cliente, do carro, da placa ou do
+  chassi (os últimos dígitos já bastam). Atalho: tecla `/`.
+- **Falta**: os botões mostram quantos carros ainda não passaram por cada
+  etapa. Clique em *R*, por exemplo, para ver só os que estão sem Renave.
+- Quando todas as etapas do carro estão feitas, ele vai para *Concluídos*.
+- Para corrigir a data de uma etapa, abra a ficha (clique no nome do carro).
+
+O quadro tem nome de cliente e chassi, então **ele nunca é público**. Em modo
+local fica só no aparelho (use o *Backup* do próprio quadro, que é separado do
+backup do estoque). Em modo nuvem fica na tabela `processos` do Supabase, que
+só quem está logado consegue ler. Se você já tinha ligado a nuvem antes, rode
+o `supabase.sql` de novo para criar essa tabela.
 
 ---
 

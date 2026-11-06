@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Quadro de entrada · TR Motors</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#ffffff">
+<link rel="icon" href="assets/marca.png">
+<link rel="stylesheet" href="assets/theme.css">
+
+<style>
+/* ============================================================
+   TR MOTORS · quadro de entrada
+   A papelada de cada carro que entra no estoque, etapa por etapa.
+   ============================================================ */
+
+/* ---------- entrada ---------- */
+.porta { min-height: 100svh; display: grid; place-items: center; padding: 24px; }
+.porta-caixa { width: min(380px, 100%); border: 1px solid var(--tinta); padding: 40px 32px 32px; }
+.porta-selo { width: 58px; height: 58px; margin: 0 auto 22px; }
+.porta-caixa h1 { font-size: 22px; font-weight: 600; letter-spacing: -.02em; margin: 0 0 6px; text-align: center; }
+.porta-caixa > p { color: var(--cinza); font-size: 14px; margin: 0 0 28px; text-align: center; line-height: 1.6; }
+.porta-caixa form { display: grid; gap: 14px; }
+.erro { color: #b32b20; font-size: 13.5px; margin: 0; min-height: 18px; text-align: center; }
+.porta-pe { margin-top: 24px; text-align: center; font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--cinza-2); }
+.porta-pe a:hover { color: var(--tinta); }
+
+/* ---------- cabeçalho ---------- */
+.painel-topo {
+  position: sticky; top: 0; z-index: 40;
+  display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+  padding: 12px var(--goteira);
+  background: var(--papel); border-bottom: 1px solid var(--tinta);
+}
+.painel-topo .marca { display: flex; align-items: center; gap: 10px; margin-right: auto; }
+.painel-topo .selo-mini { width: 32px; height: 32px; }
+.painel-topo b { display: block; font-size: 14.5px; font-weight: 600; letter-spacing: .04em; line-height: 1.1; }
+.painel-topo .sub { font-size: 9px; letter-spacing: .16em; color: var(--cinza); }
+.acoes { display: flex; gap: 8px; flex-wrap: wrap; }
+.modo { font-size: 9.5px; letter-spacing: .14em; text-transform: uppercase; padding: 5px 9px; border: 1px solid var(--regua-2); color: var(--cinza); }
+.modo.nuvem { border-color: var(--tinta); color: var(--tinta); }
+
+/* ---------- busca ---------- */
+.busca { position: relative; padding-top: 22px; }
+.busca svg { position: absolute; left: 0; bottom: 14px; color: var(--cinza); pointer-events: none; }
+.busca .input { border: 0; border-bottom: 1px solid var(--tinta); padding: 10px 0 10px 30px; font-size: 19px; }
+.busca .input::placeholder { color: var(--cinza-2); }
+
+/* ---------- abas ---------- */
+.abas { display: flex; gap: 0; margin-top: 22px; border-bottom: 1px solid var(--regua); flex-wrap: wrap; }
+.aba { padding: 12px 18px 11px 0; margin-right: 18px; font-size: 14px; color: var(--cinza); border-bottom: 2px solid transparent; margin-bottom: -1px; }
+.aba b { font-weight: 600; font-variant-numeric: tabular-nums; margin-left: 4px; }
+.aba[aria-pressed=true] { color: var(--tinta); border-bottom-color: var(--tinta); }
+.aba:hover { color: var(--tinta); }
+.ordem { margin-left: auto; align-self: center; width: auto; border: 0; padding: 8px 24px 8px 0; font-size: 13.5px; color: var(--cinza); background-position: right 4px center; }
+
+/* ---------- falta ---------- */
+.falta { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; padding: 16px 0; border-bottom: 1px solid var(--regua); }
+.falta > span { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--cinza); margin-right: 4px; }
+.falta button { display: inline-flex; align-items: center; gap: 7px; height: 32px; padding: 0 11px; border: 1px solid var(--regua-2); font-size: 13px; transition: .15s; }
+.falta button i { font-style: normal; font-weight: 600; }
+.falta button em { font-style: normal; color: var(--cinza); font-variant-numeric: tabular-nums; }
+.falta button:hover:not(:disabled) { border-color: var(--tinta); }
+.falta button[aria-pressed=true] { background: var(--tinta); border-color: var(--tinta); color: var(--papel); }
+.falta button[aria-pressed=true] em { color: var(--cinza-2); }
+.falta button:disabled { opacity: .35; cursor: default; }
+
+/* ---------- linhas ---------- */
+.linhas { display: flex; flex-direction: column; padding-bottom: 90px; }
+.linha { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 22px; align-items: center; padding: 18px 0; border-bottom: 1px solid var(--regua); }
+.linha.ok .linha-info, .linha.ok .passos { opacity: .55; }
+.linha-info { min-width: 0; cursor: pointer; }
+.linha-info h3 { margin: 0; font-size: 16.5px; font-weight: 600; letter-spacing: -.015em; line-height: 1.3; }
+.linha-info .ids { margin: 4px 0 0; font-size: 12.5px; color: var(--cinza); font-variant-numeric: tabular-nums; display: flex; gap: 4px 14px; flex-wrap: wrap; }
+.linha-info .ids b { color: var(--tinta); font-weight: 500; }
+.linha-info .cli { margin: 3px 0 0; font-size: 14px; }
+.linha-info .notas { margin: 7px 0 0; font-size: 13px; color: var(--cinza); line-height: 1.5; border-left: 2px solid var(--regua-2); padding-left: 9px; white-space: pre-line; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.linha-info .meta { margin: 8px 0 0; display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+.pip { font-size: 9.5px; letter-spacing: .12em; text-transform: uppercase; padding: 3px 7px; border: 1px solid var(--regua-2); color: var(--cinza); }
+.pip.forte { border-color: var(--tinta); color: var(--tinta); }
+.pip.cheio { background: var(--tinta); border-color: var(--tinta); color: var(--papel); }
+mark { background: var(--tinta); color: var(--papel); padding: 0 1px; }
+
+/* as etapas */
+.passos { display: grid; grid-template-columns: repeat(7, 58px); gap: 6px; }
+.passo {
+  height: 58px; border: 1px solid var(--regua-2); background: var(--papel);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px;
+  transition: background .15s, border-color .15s, color .15s;
+  position: relative;
+}
+.passo .s { font-size: 13.5px; font-weight: 600; letter-spacing: .01em; line-height: 1; }
+.passo .d { font-size: 10px; color: var(--cinza); line-height: 1; font-variant-numeric: tabular-nums; min-height: 10px; }
+.passo:hover { border-color: var(--tinta); }
+.passo.feito { background: var(--tinta); border-color: var(--tinta); color: var(--papel); }
+.passo.feito .d { color: var(--cinza-2); }
+.passo.feito::after { content: ''; position: absolute; top: 6px; right: 7px; width: 3px; height: 6px; border: solid var(--papel); border-width: 0 1.4px 1.4px 0; rotate: 45deg; }
+.passo.proximo { border-color: var(--tinta); border-width: 1.5px; }
+.passo.naotem { border-style: dashed; color: var(--cinza-2); background: transparent; }
+.passo.naotem .d { color: var(--cinza-2); }
+.passo.naotem:hover { color: var(--tinta); }
+
+.linha-acoes { display: flex; gap: 6px; }
+.ico { width: 34px; height: 34px; border: 1px solid var(--regua-2); display: grid; place-items: center; color: var(--cinza); transition: .18s; }
+.ico:hover { border-color: var(--tinta); color: var(--tinta); }
+.ico.perigo:hover { background: #b32b20; border-color: #b32b20; color: #fff; }
+
+@media (max-width: 1080px) {
+  .linha { grid-template-columns: minmax(0, 1fr) auto; }
+  .passos { grid-column: 1 / -1; grid-row: 2; }
+  .linha-acoes { grid-column: 2; grid-row: 1; align-self: start; }
+}
+@media (max-width: 560px) {
+  .passos { grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; }
+  .passo { height: 52px; }
+  .passo .s { font-size: 12px; }
+  .passo .d { font-size: 9px; }
+  .ordem { margin-left: 0; }
+}
+
+.vazio-lista { padding: 64px 0; text-align: center; color: var(--cinza); border-bottom: 1px solid var(--regua); line-height: 1.7; }
+.vazio-lista b { color: var(--tinta); font-weight: 500; display: block; font-size: 16px; margin-bottom: 4px; }
+
+/* legenda */
+.legenda { display: flex; gap: 6px 16px; flex-wrap: wrap; padding: 20px 0 0; font-size: 12px; color: var(--cinza); }
+.legenda b { color: var(--tinta); font-weight: 600; margin-right: 3px; }
+
+/* ---------- gaveta ---------- */
+.gaveta { position: fixed; inset: 0; z-index: 80; display: flex; justify-content: flex-end; }
+.gaveta-fundo { position: absolute; inset: 0; background: rgba(11,11,11,.4); }
+.gaveta-painel { position: relative; width: min(600px, 100%); height: 100svh; overflow-y: auto; overscroll-behavior: contain; background: var(--papel); border-left: 1px solid var(--tinta); display: flex; flex-direction: column; }
+.gaveta-topo { position: sticky; top: 0; z-index: 3; display: flex; align-items: center; gap: 14px; padding: 16px var(--goteira); background: var(--papel); border-bottom: 1px solid var(--tinta); }
+.gaveta-topo h2 { margin: 0 auto 0 0; font-size: 18px; font-weight: 600; letter-spacing: -.015em; }
+.gaveta-corpo { padding: 26px var(--goteira) 30px; flex: 1; }
+.gaveta-pe { position: sticky; bottom: 0; display: flex; gap: 9px; padding: 14px var(--goteira); background: var(--papel); border-top: 1px solid var(--tinta); }
+.gaveta-pe .btn { flex: 1; }
+
+fieldset { border: 0; padding: 0; margin: 0 0 30px; }
+legend { font-size: 10px; letter-spacing: .18em; text-transform: uppercase; color: var(--cinza); padding: 0 0 14px; }
+.duas { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+@media (max-width: 520px) { .duas { grid-template-columns: 1fr; } }
+.mt { margin-top: 14px; }
+.maiusc { text-transform: uppercase; }
+
+/* checklist dentro da ficha */
+.check { display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: center; padding: 9px 0; border-bottom: 1px solid var(--regua); }
+.check:first-of-type { border-top: 1px solid var(--regua); }
+.check.off { opacity: .45; }
+.marcar { display: flex; align-items: center; gap: 12px; font-size: 15px; cursor: pointer; }
+.marcar small { color: var(--cinza); font-size: 12px; font-weight: 600; min-width: 38px; }
+.marcar input { appearance: none; width: 20px; height: 20px; border: 1px solid var(--regua-2); flex: none; display: grid; place-items: center; cursor: pointer; transition: .15s; margin: 0; }
+.marcar input:checked { background: var(--tinta); border-color: var(--tinta); }
+.marcar input:checked::after { content: ''; width: 5px; height: 10px; border: solid var(--papel); border-width: 0 1.6px 1.6px 0; rotate: 45deg; margin-top: -2px; }
+.marcar input:disabled { cursor: default; }
+.check .input { width: 150px; padding: 7px 9px; font-size: 13.5px; }
+.check .input:disabled { color: var(--cinza-2); background: var(--papel-2); }
+.tem { display: flex; gap: 18px; flex-wrap: wrap; margin-top: 4px; }
+.tem .marcar { font-size: 14px; color: var(--cinza); }
+
+/* ---------- recado ---------- */
+.recado { position: fixed; left: 50%; bottom: 26px; translate: -50% 0; z-index: 120; background: var(--tinta); color: var(--papel); padding: 13px 20px; font-size: 14px; display: flex; gap: 16px; align-items: center; animation: sobe .25s var(--ease); max-width: calc(100vw - 32px); }
+.recado button { text-decoration: underline; text-underline-offset: 3px; font-weight: 500; }
+.recado.ruim { background: #b32b20; }
+@keyframes sobe { from { transform: translate(-50%, 12px); opacity: 0 } }
+</style>
+</head>
+
+<body>
+
+<!-- ============ ENTRADA ============ -->
+<div class="porta" id="porta">
+  <div class="porta-caixa">
+    <span class="porta-selo mark mark-claro"><img src="assets/marca.png" alt="TR Motors" width="58" height="58"></span>
+    <h1>Quadro de entrada</h1>
+    <p>Acompanhe a papelada de cada carro que entra no estoque, etapa por etapa.</p>
+    <form id="formEntrar">
+      <div class="campo" id="campoUsuario" hidden>
+        <label for="usuario">E-mail</label>
+        <input class="input" type="email" id="usuario" autocomplete="username">
+      </div>
+      <div class="campo">
+        <label for="senha">Senha</label>
+        <input class="input" type="password" id="senha" autocomplete="current-password" required autofocus>
+      </div>
+      <button class="btn btn-bloco" type="submit">Entrar</button>
+      <p class="erro" id="erroEntrar"></p>
+    </form>
+    <p class="porta-pe"><a href="admin.html">Painel do estoque</a> · <a href="index.html">Site</a></p>
+  </div>
+</div>
+
+<!-- ============ QUADRO ============ -->
+<div id="quadro" hidden>
+  <header class="painel-topo">
+    <div class="marca">
+      <span class="selo-mini mark mark-claro"><img src="assets/marca.png" alt="" width="32" height="32"></span>
+      <div><b>TR MOTORS</b><span class="sub">QUADRO DE ENTRADA</span></div>
+    </div>
+    <span class="modo" id="modo"></span>
+    <div class="acoes">
+      <button class="btn btn-vazado btn-p" id="btnExportar">Backup</button>
+      <button class="btn btn-vazado btn-p" id="btnImportar">Restaurar</button>
+      <a class="btn btn-vazado btn-p" href="admin.html">Painel do estoque</a>
+      <button class="btn btn-p" id="btnNovo">Nova entrada</button>
+      <button class="btn btn-vazado btn-p" id="btnSair">Sair</button>
+    </div>
+  </header>
+
+  <div class="wrap">
+    <div class="busca">
+      <label class="sr" for="busca">Procurar</label>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+      <input class="input" type="search" id="busca" placeholder="Cliente, carro, placa ou chassi" autocomplete="off">
+    </div>
+
+    <div class="abas" role="group" aria-label="Situação">
+      <button class="aba" data-aba="andamento" aria-pressed="true">Em andamento<b id="nAnd">0</b></button>
+      <button class="aba" data-aba="concluidos" aria-pressed="false">Concluídos<b id="nOk">0</b></button>
+      <button class="aba" data-aba="todos" aria-pressed="false">Todos<b id="nTodos">0</b></button>
+      <select class="select ordem" id="ordem" aria-label="Ordem">
+        <option value="antigos">Mais antigos primeiro</option>
+        <option value="recentes">Mais recentes primeiro</option>
+        <option value="cliente">Cliente (A a Z)</option>
+      </select>
+    </div>
+
+    <div class="falta" id="falta"></div>
+
+    <div class="legenda" id="legenda"></div>
+
+    <div class="linhas" id="linhas"></div>
+  </div>
+</div>
+
+<!-- ============ GAVETA ============ -->
+<div class="gaveta" id="gaveta" hidden role="dialog" aria-modal="true" aria-labelledby="gavetaTitulo">
+  <div class="gaveta-fundo" data-cancelar></div>
+  <form class="gaveta-painel" id="formProc" autocomplete="off">
+    <div class="gaveta-topo">
+      <h2 id="gavetaTitulo">Nova entrada</h2>
+      <button class="ico" type="button" data-cancelar aria-label="Fechar">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>
+      </button>
+    </div>
+
+    <div class="gaveta-corpo">
+      <fieldset>
+        <legend>O carro</legend>
+        <div class="campo">
+          <label for="fCarro">Carro *</label>
+          <input class="input" id="fCarro" list="doEstoque" required placeholder="Ex.: VW Jetta Highline 2013">
+          <datalist id="doEstoque"></datalist>
+        </div>
+        <div class="duas mt">
+          <div class="campo">
+            <label for="fPlaca">Placa</label>
+            <input class="input maiusc" id="fPlaca" maxlength="8" placeholder="ABC1D23">
+          </div>
+          <div class="campo">
+            <label for="fChassi">Chassi</label>
+            <input class="input maiusc" id="fChassi" maxlength="17" placeholder="17 caracteres">
+          </div>
+        </div>
+        <div class="duas mt">
+          <div class="campo">
+            <label for="fCliente">Cliente</label>
+            <input class="input" id="fCliente" placeholder="Nome do cliente">
+          </div>
+          <div class="campo">
+            <label for="fData">Data de entrada</label>
+            <input class="input" id="fData" type="date">
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Este carro tem</legend>
+        <div class="tem">
+          <label class="marcar"><input type="checkbox" id="temCVU"> Compra do usado (CVU)</label>
+          <label class="marcar"><input type="checkbox" id="temBONUS"> Bônus</label>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Etapas</legend>
+        <div id="checks"></div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Anotações</legend>
+        <textarea class="textarea" id="fNotas" rows="5" placeholder="Pendências, contatos, número da OS, valor do bônus..."></textarea>
+      </fieldset>
+    </div>
+
+    <div class="gaveta-pe">
+      <button class="btn btn-vazado" type="button" data-cancelar>Cancelar</button>
+      <button class="btn" type="submit" id="btnSalvar">Salvar</button>
+    </div>
+  </form>
+</div>
+
+<input type="file" id="arquivoJson" accept="application/json,.json" hidden>
+
+<script src="assets/store.js"></script>
+<script>
+/* ============================================================
+   TR MOTORS · quadro de entrada
+   ============================================================ */
+const $  = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+
+let PROCS = [];
+let editando = null;
+let aba = 'andamento';
+let filtroEtapa = '';
+
+const naNuvem = Estoque.modo === 'nuvem';
+
+/* ---------- datas ---------- */
+const hoje = () => {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+};
+const ddmm = iso => iso ? iso.slice(8, 10) + '/' + iso.slice(5, 7) : '';
+const ddmmaa = iso => iso ? `${iso.slice(8, 10)}/${iso.slice(5, 7)}/${iso.slice(2, 4)}` : '';
+const diasDesde = iso => {
+  if (!iso) return null;
+  const [a, m, d] = iso.split('-').map(Number);
+  const ini = new Date(a, m - 1, d);
+  const agora = new Date(); agora.setHours(0, 0, 0, 0);
+  return Math.round((agora - ini) / 864e5);
+};
+/** Data em que a última etapa foi marcada. */
+const fimDo = p => etapasDo(p).map(e => p.etapas?.[e.k]).filter(Boolean).sort().pop() || '';
+
+/* ---------- busca ---------- */
+const semAcento = s => String(s ?? '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+const soLetras = s => semAcento(s).replace(/[^a-z0-9]/g, '');
+
+function bate(p, termo) {
+  if (!termo) return true;
+  const texto = semAcento([p.carro, p.cliente, p.placa, p.chassi, p.notas].join(' '));
+  const ids = soLetras([p.placa, p.chassi].join(' '));
+  // cada palavra digitada precisa aparecer em algum lugar
+  return semAcento(termo).split(/\s+/).filter(Boolean)
+    .every(t => texto.includes(t) || (soLetras(t) && ids.includes(soLetras(t))));
+}
+
+/** Escapa e destaca o termo procurado. */
+function realce(valor, termo) {
+  const s = String(valor ?? '');
+  if (!termo || !s) return esc(s);
+  const base = semAcento(s);
+  const partes = semAcento(termo).split(/\s+/).filter(t => t.length > 1);
+  const marcas = new Array(s.length).fill(false);
+  partes.forEach(t => {
+    let i = base.indexOf(t);
+    while (i !== -1) { for (let j = i; j < i + t.length; j++) marcas[j] = true; i = base.indexOf(t, i + 1); }
+  });
+  let out = '', aberto = false;
+  for (let i = 0; i < s.length; i++) {
+    if (marcas[i] && !aberto) { out += '<mark>'; aberto = true; }
+    if (!marcas[i] && aberto) { out += '</mark>'; aberto = false; }
+    out += esc(s[i]);
+  }
+  return out + (aberto ? '</mark>' : '');
+}
+
+/* ---------- recado ---------- */
+let recadoTimer;
+function recado(texto, { ruim = false, desfazer = null } = {}) {
+  $('.recado')?.remove();
+  const d = document.createElement('div');
+  d.className = 'recado' + (ruim ? ' ruim' : '');
+  d.innerHTML = `<span>${esc(texto)}</span>`;
+  if (desfazer) {
+    const b = document.createElement('button');
+    b.textContent = 'Desfazer';
+    b.onclick = () => { d.remove(); desfazer(); };
+    d.appendChild(b);
+  }
+  document.body.appendChild(d);
+  clearTimeout(recadoTimer);
+  recadoTimer = setTimeout(() => d.remove(), desfazer ? 6000 : 3200);
+}
+
+/* ============================================================
+   Entrada
+   ============================================================ */
+if (naNuvem) $('#campoUsuario').hidden = false;
+
+$('#formEntrar').addEventListener('submit', async e => {
+  e.preventDefault();
+  const r = await Estoque.Sessao.entrar($('#usuario').value.trim(), $('#senha').value);
+  if (!r.ok) { $('#erroEntrar').textContent = r.erro; return; }
+  abrirQuadro();
+});
+
+async function abrirQuadro() {
+  $('#porta').hidden = true;
+  $('#quadro').hidden = false;
+  $('#modo').textContent = naNuvem ? 'Nuvem' : 'Local';
+  $('#modo').classList.toggle('nuvem', naNuvem);
+  $('#modo').title = naNuvem
+    ? 'Salvo na nuvem: aparece igual em qualquer aparelho logado.'
+    : 'Salvo só neste aparelho e neste navegador. Use o Backup antes de trocar de aparelho.';
+
+  $('#legenda').innerHTML = ETAPAS.map(e =>
+    `<span><b>${esc(e.sigla)}</b>${esc(e.nome)}${e.opcional ? ' (quando tem)' : ''}</span>`).join('');
+
+  try { $('#ordem').value = localStorage.getItem('tr.quadro.ordem') || 'antigos'; } catch {}
+
+  await recarregar();
+  carregarSugestoes();
+}
+
+$('#btnSair').addEventListener('click', async () => {
+  await Estoque.Sessao.sair();
+  location.reload();
+});
+
+/** Sugere os carros do estoque no campo "Carro" da ficha. */
+async function carregarSugestoes() {
+  try {
+    await Estoque.init();
+    const carros = await Estoque.list();
+    $('#doEstoque').innerHTML = carros
+      .map(c => [nomeCompleto(c), fmtAno(c)].filter(Boolean).join(' '))
+      .map(n => `<option value="${esc(n)}">`).join('');
+  } catch (err) { console.warn(err); }
+}
+
+/* ============================================================
+   Lista
+   ============================================================ */
+async function recarregar() {
+  try {
+    PROCS = await Processos.list();
+  } catch (err) {
+    console.error(err);
+    recado('Não consegui carregar o quadro. Confira a conexão.', { ruim: true });
+  }
+  pintar();
+}
+
+function pintar() {
+  const termo = $('#busca').value.trim();
+  const andamento = PROCS.filter(p => !concluido(p));
+  $('#nAnd').textContent = andamento.length;
+  $('#nOk').textContent = PROCS.length - andamento.length;
+  $('#nTodos').textContent = PROCS.length;
+  $$('.aba').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.aba === aba)));
+
+  // "Falta": quantos carros em andamento ainda não passaram por cada etapa
+  const base = andamento.filter(p => bate(p, termo));
+  $('#falta').innerHTML = '<span>Falta</span>' + ETAPAS.map(e => {
+    const n = base.filter(p => faltando(p).some(f => f.k === e.k)).length;
+    const ativo = filtroEtapa === e.k;
+    return `<button type="button" data-etapa="${e.k}" aria-pressed="${ativo}" ${!n && !ativo ? 'disabled' : ''}
+              title="Carros que ainda não têm ${esc(e.nome)}"><i>${esc(e.sigla)}</i><em>${n}</em></button>`;
+  }).join('');
+
+  let lista = PROCS.filter(p => bate(p, termo));
+  if (aba === 'andamento') lista = lista.filter(p => !concluido(p));
+  if (aba === 'concluidos') lista = lista.filter(concluido);
+  if (filtroEtapa) lista = lista.filter(p => faltando(p).some(f => f.k === filtroEtapa));
+
+  const ord = $('#ordem').value;
+  const dataDe = p => p.entrada || new Date(p.criadoEm || 0).toISOString().slice(0, 10);
+  lista.sort((a, b) => {
+    if (ord === 'cliente') return semAcento(a.cliente || '~').localeCompare(semAcento(b.cliente || '~'));
+    const d = dataDe(a).localeCompare(dataDe(b)) || (a.criadoEm || 0) - (b.criadoEm || 0);
+    return ord === 'recentes' ? -d : d;
+  });
+  // na aba "Todos", quem já terminou vai para o fim
+  if (aba === 'todos') lista.sort((a, b) => concluido(a) - concluido(b));
+
+  if (!lista.length) {
+    $('#linhas').innerHTML = `<div class="vazio-lista">${
+      !PROCS.length
+        ? '<b>Nenhum carro no quadro ainda.</b>Clique em <b style="display:inline">Nova entrada</b> quando um carro chegar.'
+        : termo
+          ? `<b>Nada encontrado para "${esc(termo)}".</b>Procure por parte do nome do cliente, do carro, da placa ou do chassi.`
+          : aba === 'andamento' && !filtroEtapa
+            ? '<b>Tudo em dia.</b>Nenhum carro com etapa pendente.'
+            : '<b>Nenhum carro aqui.</b>'
+    }</div>`;
+    return;
+  }
+
+  $('#linhas').innerHTML = lista.map(p => linha(p, termo)).join('');
+}
+
+function linha(p, termo) {
+  const pend = faltando(p);
+  const ok = !pend.length;
+  const prox = pend[0]?.k;
+  const dias = diasDesde(p.entrada);
+
+  const ids = [
+    p.placa ? `<span>Placa <b>${realce(p.placa, termo)}</b></span>` : '',
+    p.chassi ? `<span>Chassi <b>${realce(p.chassi, termo)}</b></span>` : '',
+    p.entrada ? `<span>Entrou ${ddmmaa(p.entrada)}</span>` : '',
+  ].filter(Boolean).join('');
+
+  const meta = ok
+    ? `<span class="pip cheio">Concluído${fimDo(p) ? ' ' + ddmm(fimDo(p)) : ''}</span>`
+    : `<span class="pip forte">Próximo: ${esc(pend[0].nome)}</span>
+       <span class="pip">${etapasDo(p).length - pend.length} de ${etapasDo(p).length}</span>
+       ${dias != null && dias > 0 ? `<span class="pip">${dias} ${dias === 1 ? 'dia' : 'dias'}</span>` : ''}`;
+
+  const passos = ETAPAS.map(e => {
+    const vale = !e.opcional || p.tem?.[e.k];
+    const feito = vale && etapaFeita(p, e.k);
+    const cls = !vale ? 'naotem' : feito ? 'feito' : (e.k === prox ? 'proximo' : '');
+    const dica = !vale ? `${e.nome}: este carro não tem. Clique se tiver.`
+               : feito ? `${e.nome}: feito em ${ddmmaa(p.etapas[e.k])}. Clique para desmarcar.`
+               : `${e.nome}: pendente. Clique para marcar como feito hoje.`;
+    return `<button type="button" class="passo ${cls}" data-id="${esc(p.id)}" data-k="${e.k}"
+              title="${esc(dica)}" aria-label="${esc(dica)}">
+              <span class="s">${esc(e.sigla)}</span>
+              <span class="d">${!vale ? 'não tem' : feito ? ddmm(p.etapas[e.k]) : ''}</span>
+            </button>`;
+  }).join('');
+
+  return `<article class="linha${ok ? ' ok' : ''}">
+    <div class="linha-info" data-editar="${esc(p.id)}">
+      <h3>${realce(p.carro || 'Carro sem nome', termo)}</h3>
+      ${p.cliente ? `<p class="cli">${realce(p.cliente, termo)}</p>` : ''}
+      ${ids ? `<p class="ids">${ids}</p>` : ''}
+      ${p.notas ? `<p class="notas">${realce(p.notas, termo)}</p>` : ''}
+      <div class="meta">${meta}</div>
+    </div>
+    <div class="passos">${passos}</div>
+    <div class="linha-acoes">
+      <button class="ico" type="button" data-editar="${esc(p.id)}" aria-label="Editar e anotar" title="Editar e anotar">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="M4 20h4L19 9l-4-4L4 16v4Z"/><path d="m13.5 6.5 4 4"/></svg>
+      </button>
+      <button class="ico perigo" type="button" data-apagar="${esc(p.id)}" aria-label="Apagar" title="Apagar">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/></svg>
+      </button>
+    </div>
+  </article>`;
+}
+
+/* ---------- cliques no quadro ---------- */
+$('#linhas').addEventListener('click', async e => {
+  const passo = e.target.closest('.passo');
+  if (passo) return alternar(passo.dataset.id, passo.dataset.k);
+
+  const ed = e.target.closest('[data-editar]');
+  if (ed) return abrirGaveta(PROCS.find(p => p.id === ed.dataset.editar));
+
+  const ap = e.target.closest('[data-apagar]');
+  if (ap) {
+    const p = PROCS.find(x => x.id === ap.dataset.apagar);
+    if (!p || !confirm(`Apagar "${p.carro}" do quadro?\n\nIsso não mexe no estoque do site.`)) return;
+    try {
+      await Processos.remove(p.id);
+      PROCS = PROCS.filter(x => x.id !== p.id);
+      pintar();
+      recado('Apagado do quadro.', { desfazer: async () => { await Processos.save(p); recarregar(); } });
+    } catch (err) {
+      console.error(err);
+      recado('Não consegui apagar. Tente de novo.', { ruim: true });
+    }
+  }
+});
+
+/** Um clique na etapa: marca como feita hoje, ou desmarca. */
+async function alternar(id, k) {
+  const p = PROCS.find(x => x.id === id);
+  if (!p) return;
+  const etapa = ETAPAS.find(e => e.k === k);
+  const antes = structuredClone(p);
+  const novo = structuredClone(p);
+  novo.etapas = novo.etapas || {};
+  novo.tem = novo.tem || {};
+
+  let msg;
+  if (etapa.opcional && !novo.tem[k]) {
+    novo.tem[k] = true;
+    msg = `${etapa.nome} incluído neste carro.`;
+  } else if (novo.etapas[k]) {
+    delete novo.etapas[k];
+    msg = `${etapa.nome} desmarcado.`;
+  } else {
+    novo.etapas[k] = hoje();
+    msg = concluido(novo) ? `${novo.carro}: tudo concluído.` : `${etapa.nome} feito.`;
+  }
+
+  // pinta na hora e grava por trás
+  Object.assign(p, novo);
+  pintar();
+  try {
+    Object.assign(p, await Processos.save(novo));
+    recado(msg, { desfazer: async () => {
+      Object.assign(p, antes);
+      if (!antes.etapas) delete p.etapas;
+      pintar();
+      await Processos.save(antes);
+    } });
+  } catch (err) {
+    console.error(err);
+    Object.assign(p, antes);
+    pintar();
+    recado('Não consegui salvar. Confira a conexão.', { ruim: true });
+  }
+}
+
+/* ---------- filtros ---------- */
+$('#busca').addEventListener('input', pintar);
+$('#ordem').addEventListener('change', () => {
+  try { localStorage.setItem('tr.quadro.ordem', $('#ordem').value); } catch {}
+  pintar();
+});
+$$('.aba').forEach(b => b.addEventListener('click', () => {
+  aba = b.dataset.aba;
+  if (aba === 'concluidos') filtroEtapa = '';
+  pintar();
+}));
+$('#falta').addEventListener('click', e => {
+  const b = e.target.closest('[data-etapa]');
+  if (!b) return;
+  filtroEtapa = filtroEtapa === b.dataset.etapa ? '' : b.dataset.etapa;
+  if (filtroEtapa && aba === 'concluidos') aba = 'andamento';
+  pintar();
+});
+
+// "/" ou Ctrl+K vai direto para a busca
+document.addEventListener('keydown', e => {
+  if ($('#quadro').hidden || !$('#gaveta').hidden) return;
+  const digitando = /input|textarea|select/i.test(document.activeElement?.tagName);
+  if ((e.key === '/' && !digitando) || ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k')) {
+    e.preventDefault();
+    $('#busca').focus();
+    $('#busca').select();
+  }
+  if (e.key === 'Escape' && document.activeElement === $('#busca')) { $('#busca').value = ''; pintar(); }
+});
+
+// No modo nuvem, outro aparelho pode ter mexido: ao voltar para a aba, atualiza.
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible' && !$('#quadro').hidden && $('#gaveta').hidden) recarregar();
+});
+
+/* ============================================================
+   Ficha
+   ============================================================ */
+function pintarChecks(etapas) {
+  $('#checks').innerHTML = ETAPAS.map(e => {
+    const vale = !e.opcional || $('#tem' + e.k)?.checked;
+    const data = etapas[e.k] || '';
+    return `<div class="check${vale ? '' : ' off'}" data-k="${e.k}">
+      <label class="marcar"><input type="checkbox" ${data ? 'checked' : ''} ${vale ? '' : 'disabled'}>
+        <small>${esc(e.sigla)}</small>${esc(e.nome)}</label>
+      <input class="input" type="date" value="${esc(data)}" ${data && vale ? '' : 'disabled'} aria-label="Data de ${esc(e.nome)}">
+    </div>`;
+  }).join('');
+}
+
+function lerChecks() {
+  const out = {};
+  $$('#checks .check').forEach(el => {
+    const marcado = el.querySelector('[type=checkbox]').checked;
+    const data = el.querySelector('[type=date]').value;
+    if (marcado) out[el.dataset.k] = data || hoje();
+  });
+  return out;
+}
+
+$('#checks').addEventListener('change', e => {
+  const el = e.target.closest('.check');
+  if (!el || e.target.type !== 'checkbox') return;
+  const data = el.querySelector('[type=date]');
+  data.disabled = !e.target.checked;
+  if (e.target.checked && !data.value) data.value = hoje();
+  if (!e.target.checked) data.value = '';
+});
+
+['temCVU', 'temBONUS'].forEach(id => $('#' + id).addEventListener('change', () => pintarChecks(lerChecks())));
+
+function abrirGaveta(p) {
+  editando = p || null;
+  $('#gavetaTitulo').textContent = p ? 'Editar entrada' : 'Nova entrada';
+  $('#fCarro').value   = p?.carro || '';
+  $('#fPlaca').value   = p?.placa || '';
+  $('#fChassi').value  = p?.chassi || '';
+  $('#fCliente').value = p?.cliente || '';
+  $('#fData').value    = p?.entrada || hoje();
+  $('#fNotas').value   = p?.notas || '';
+  $('#temCVU').checked   = !!p?.tem?.CVU;
+  $('#temBONUS').checked = !!p?.tem?.BONUS;
+  pintarChecks(p?.etapas || {});
+  $('#gaveta').hidden = false;
+  document.body.style.overflow = 'hidden';
+  setTimeout(() => (p ? $('#fNotas') : $('#fCarro')).focus(), 30);
+}
+
+function fecharGaveta() {
+  $('#gaveta').hidden = true;
+  document.body.style.overflow = '';
+  editando = null;
+}
+
+$$('[data-cancelar]').forEach(b => b.addEventListener('click', fecharGaveta));
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('#gaveta').hidden) fecharGaveta(); });
+$('#btnNovo').addEventListener('click', () => abrirGaveta(null));
+
+$('#formProc').addEventListener('submit', async e => {
+  e.preventDefault();
+  $('#btnSalvar').disabled = true;
+  const proc = {
+    ...(editando || {}),
+    carro:   $('#fCarro').value.trim(),
+    placa:   $('#fPlaca').value.trim().toUpperCase().replace(/\s+/g, ''),
+    chassi:  $('#fChassi').value.trim().toUpperCase().replace(/\s+/g, ''),
+    cliente: $('#fCliente').value.trim(),
+    entrada: $('#fData').value || hoje(),
+    notas:   $('#fNotas').value.trim(),
+    tem:     { CVU: $('#temCVU').checked, BONUS: $('#temBONUS').checked },
+    etapas:  lerChecks(),
+  };
+  // etapa opcional desligada não fica marcada escondida
+  ETAPAS.filter(x => x.opcional && !proc.tem[x.k]).forEach(x => delete proc.etapas[x.k]);
+
+  try {
+    const novo = !editando;
+    await Processos.save(proc);
+    fecharGaveta();
+    await recarregar();
+    recado(novo ? `${proc.carro} entrou no quadro.` : 'Alterações salvas.');
+  } catch (err) {
+    console.error(err);
+    recado('Não consegui salvar. Confira a conexão e tente de novo.', { ruim: true });
+  } finally {
+    $('#btnSalvar').disabled = false;
+  }
+});
+
+/* ============================================================
+   Backup
+   ============================================================ */
+$('#btnExportar').addEventListener('click', async () => {
+  const dados = { loja: 'TR Motors', tipo: 'quadro-de-entrada', geradoEm: new Date().toISOString(), processos: await Processos.list() };
+  const url = URL.createObjectURL(new Blob([JSON.stringify(dados, null, 2)], { type: 'application/json' }));
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `quadro-trmotors-${hoje()}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  recado('Backup do quadro baixado.');
+});
+
+$('#btnImportar').addEventListener('click', () => $('#arquivoJson').click());
+$('#arquivoJson').addEventListener('change', async e => {
+  const arq = e.target.files[0];
+  e.target.value = '';
+  if (!arq) return;
+  try {
+    const dados = JSON.parse(await arq.text());
+    const lista = Array.isArray(dados) ? dados : dados.processos;
+    if (!Array.isArray(lista)) throw new Error('formato');
+    if (!confirm(`Restaurar ${lista.length} carros no quadro?\n\nIsso substitui tudo que está no quadro hoje.`)) return;
+    await Processos.replaceAll(lista.map(p => ({ ...p, id: p.id || 'p' + Math.random().toString(36).slice(2, 10) })));
+    recado(`${lista.length} carros restaurados no quadro.`);
+    recarregar();
+  } catch (err) {
+    console.error(err);
+    recado('Arquivo inválido. Use um backup gerado por este quadro.', { ruim: true });
+  }
+});
+
+/* ---------- partida ---------- */
+(async () => { if (await Estoque.Sessao.ativa()) abrirQuadro(); })();
+</script>
+</body>
+</html>
