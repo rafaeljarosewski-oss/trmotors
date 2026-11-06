@@ -60,25 +60,6 @@ create policy "painel apaga fotos"
   to authenticated
   using (bucket_id = 'fotos');
 
--- ---------- 4. quadro de entrada ----------
--- A papelada de cada carro que entra (quadro.html). Tem nome de
--- cliente e chassi, então aqui o visitante NÃO lê nada: só quem
--- está logado no painel.
-create table if not exists public.processos (
-  id            text primary key,
-  dados         jsonb       not null default '{}'::jsonb,
-  atualizado_em timestamptz not null default now()
-);
-
-alter table public.processos enable row level security;
-
-drop policy if exists "quadro so para o painel" on public.processos;
-create policy "quadro so para o painel"
-  on public.processos for all
-  to authenticated
-  using (true)
-  with check (true);
-
 -- ============================================================
 --  Depois de rodar isto:
 --
